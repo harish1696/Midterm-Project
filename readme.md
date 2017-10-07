@@ -1,6 +1,6 @@
 # C++ Boilerplate
 [![Build Status](https://travis-ci.org/harish1696/Midterm-Project.svg?branch=master)](https://travis-ci.org/harish1696/Midterm-Project)
-[![Coverage Status](https://coveralls.io/repos/github/dpiet/cpp-boilerplate/badge.svg?branch=master)](https://coveralls.io/github/dpiet/cpp-boilerplate?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/harish1696/Midterm-Project/badge.svg?branch=master)](https://coveralls.io/github/harish1696/Midterm-Project?branch=master)
 ---
 
 ## Overview
