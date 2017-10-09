@@ -1,21 +1,24 @@
-# C++ Boilerplate
+# Warehouse Bot - Stock Tracking and Counting Module
 [![Build Status](https://travis-ci.org/harish1696/Midterm-Project.svg?branch=master)](https://travis-ci.org/harish1696/Midterm-Project)
 [![Coverage Status](https://coveralls.io/repos/github/harish1696/Midterm-Project/badge.svg?branch=master)](https://coveralls.io/github/harish1696/Midterm-Project?branch=master)
 ---
 
-## Product Baclog, Iteration Backlog and Worklog
-https://docs.google.com/spreadsheets/d/1u0NBx-Sbwx_unOhIq5AB6d5cziu2KoYzIz7XtidCmJc/edit?usp=sharing
-
 ## Overview
 
-Simple starter C++ project with:
+Cycle counting has become a common strategy to keep track of the warehouse inventory and prevent any financial losses that occur due to poor management of inventories in industries.But the way it is being done is time-consuming and might be erroneous as it involves human being. Hence it is always better to automate the process of cycle counting with the help of flying robots which will be able to access every nook and corner of the warehouse.
 
-- cmake
-- googletest
+The module will be able to detect QRcodes ( seen in the pallets in warehouses) from the input video file and decode them containing product ID of each package. The decoded information is then used to keep track of the inventory in the warehouse. The count of each product ID generated after each cycle counting is then used to verify the count in the inventory management software used by the company.
+
+The software module can be integrated into the autonomous flying platform and  when the flying robot is commanded to navigate along the aisles of the warehouse, the module can track and give total count of each product (labelled with QR codes) in the warehouse.
+
+
+## Week 1 Sprint Planning
+SIP Process is followed to develop the module. It is detailed in the following link.
+https://docs.google.com/spreadsheets/d/1u0NBx-Sbwx_unOhIq5AB6d5cziu2KoYzIz7XtidCmJc/edit?usp=sharing
 
 ## Standard install via command-line
 ```
-git clone --recursive https://github.com/dpiet/cpp-boilerplate
+git clone --recursive https://github.com/harish1696/Midterm-Project
 cd <path to repository>
 mkdir build
 cd build
@@ -25,7 +28,7 @@ Run tests: ./test/cpp-test
 Run program: ./app/shell-app
 ```
 
-## Building for code coverage (for assignments beginning in Week 4)
+## Building for code coverage 
 ```
 sudo apt-get install lcov
 cmake -D COVERAGE=ON -D CMAKE_BUILD_TYPE=Debug ../
@@ -42,7 +45,7 @@ In your Eclipse workspace directory (or create a new one), checkout the repo (an
 ```
 mkdir -p ~/workspace
 cd ~/workspace
-git clone --recursive https://github.com/dpiet/cpp-boilerplate
+git clone --recursive https://github.com/harish1696/Midterm-Project
 ```
 
 In your work directory, use cmake to create an Eclipse project for an [out-of-source build] of cpp-boilerplate
