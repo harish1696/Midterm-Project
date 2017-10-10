@@ -8,7 +8,7 @@ using namespace cv;
 class detectQRcode() {
 public:
   bool find(const Mat& img);
-  void draw(Mat& img);
+  void drawBoundary(Mat& img);
   
 private:
   vector<point2f> center;
