@@ -12,8 +12,12 @@
  *
  */
 
-#include<detectQRcode.hpp>
-#include<opencv2/opecv.hpp>
+#include <detectQRcode.hpp>
+#include <opencv2/opecv.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgcodecs/imgcodecs.hpp>
 using namespace std;
 using namespace vector;
 
@@ -102,7 +106,7 @@ bool detectQRcode::find(Mat img) {
     }
   }    
 
-void qrReader::drawFinders(Mat &img) {
+void detectQRcode::drawBoundary(Mat &img) {
     if(centers.size()==0) {
         return;
     }
@@ -121,7 +125,7 @@ void qrReader::drawFinders(Mat &img) {
 /**
  * @brief checks the ratio of W->B,B->W transition
  */       
-bool qrReader::checkRatio(int stateCount[])
+bool detectQRcode::checkRatio(int stateCount[])
  {
     int totalCount = 0;
     for(int i=0; i<5; i++)
@@ -266,7 +270,7 @@ float detectQRcode::checkVertical(const Mat& img, int startRow, int centerCol, i
     return checkRatio(checkStateCount)?centerRow:nan;
 }
 
-float qrReader::checkHorizontal(const Mat& img, int centerRow, int startCol, int centerCount, int totalCount) {
+float detectQRcode::checkHorizontal(const Mat& img, int centerRow, int startCol, int centerCount, int totalCount) {
     int maxCols = img.cols;
     vector<int> stateCount (5,0);
 
@@ -332,7 +336,7 @@ float qrReader::checkHorizontal(const Mat& img, int centerRow, int startCol, int
     return checkRatio(stateCount)?centerCol:nan;
 }
 
-bool qrReader::checkDiagonal(const Mat &img, float centerRow, float centerCol, int maxCount, int totalCount) {
+bool detectQRcode::checkDiagonal(const Mat &img, float centerRow, float centerCol, int maxCount, int totalCount) {
     vector<int> stateCount (5,0);
 
     int col=centerCol;

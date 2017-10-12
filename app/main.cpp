@@ -1,5 +1,9 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgcodecs/imgcodecs.hpp>
 #include <detectQRcode.hpp>
 
 using namespace std;
@@ -7,25 +11,26 @@ using namespace cv;
 
 int main(int argc, char* argv[])
 {
-  if(argc == 1)
-  {
-    cout << "Usage: " << argv[0] << " <image>" << endl;
-    exit(0);
-  }
-  Mat img = imread(argv[1]);
+  String imageName( "../../heinz.jpg" ); // by default
+  if( argc > 1)
+    {
+        imageName = argv[1];
+    }
+ 
+  Mat img = imread(imageName,IMREAD_COLOR);
   Mat imgBW;
-  cvtColor(img, imgBW, CV_BGR2GRAY);
+  cvtColor(img, imgBW, CV_RGB2GRAY);
   adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
   return 0;
-  qrReader qr = qrReader();
-  bool found = reader.find(imgBW);
+  detectQRcode qr = detectQRcode();
+  bool found = qr.find(imgBW);
   if(found) 
   {
-    reader.drawFinders(img);
+    qr.drawBoundary(img);
   }
   imshow("image", img);
   waitKey(0);
 
   return 0;
 }
-}
+
