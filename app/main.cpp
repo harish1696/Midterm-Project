@@ -11,7 +11,7 @@ using namespace cv;
 
 int main(int argc, char* argv[])
 {
-  String imageName( "../../heinz.jpg" ); // by default
+  String imageName( "../heinz.jpg" ); // by default
   if( argc > 1)
     {
         imageName = argv[1];
@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
  
   Mat img = imread(imageName,IMREAD_COLOR);
   Mat imgBW;
-  cvtColor(img, imgBW, CV_RGB2GRAY);
+  cvtColor(img, imgBW, CV_BGR2GRAY);
   adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
   return 0;
   detectQRcode qr = detectQRcode();
