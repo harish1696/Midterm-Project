@@ -9,26 +9,34 @@
 using namespace std;
 using namespace cv;
 
+
 int main(int argc, char* argv[])
 {
-  String imageName( "../heinz.jpg" ); // by default
+  int count =1;
+  String imageName( "../Qrcode2.JPG" ); // by default
   if( argc > 1)
     {
         imageName = argv[1];
     }
  
   Mat img = imread(imageName,IMREAD_COLOR);
+  resize(img,img,Size(375,500),0,0,CV_INTER_AREA);
+  cout << img.cols << " : " << img.rows << endl;
   Mat imgBW;
   cvtColor(img, imgBW, CV_BGR2GRAY);
   adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
-  return 0;
-  detectQRcode qr = detectQRcode();
+  detectQRcode qr;
   bool found = qr.find(imgBW);
   if(found) 
   {
-    qr.drawBoundary(img);
+     cout << count++ << endl;
+     qr.drawBoundary(img);
   }
+  qr.extractQRcode(img);
+  cvtColor(img, imgBW, CV_BGR2GRAY);
+  adaptiveThreshold(imgBW, img, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
   imshow("image", img);
+  qr.extractBits(img);
   waitKey(0);
 
   return 0;

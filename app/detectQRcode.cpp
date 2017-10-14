@@ -11,15 +11,16 @@
  * image frame and draw boundaries around it.
  *
  */
-
+#include <iostream>
 #include <detectQRcode.hpp>
-#include <opencv2/opecv.hpp>
+#include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgcodecs/imgcodecs.hpp>
 using namespace std;
-using namespace vector;
+
+#define nan std::numeric_limits<float>::quiet_NaN();
 
 /**
  * @brief  Constructs a object
@@ -34,14 +35,14 @@ detectQRcode::~detectQRcode() {}
 /**
  * @brief detects the presence of QRcode in the given image
  */
-bool detectQRcode::find(Mat img) {
-  center.clear();
+bool detectQRcode::find(Mat &img) {
+  centers.clear();
   moduleSize.clear();
   int skipRows=3;
   vector<int> stateCount(5,0); //each state represents W->B, B->W transitions
   int currentState = 0; // 
 
-  for( int rows=0; row<img.rows; row+=skipRows)
+  for( int row=0; row<img.rows; row+=skipRows)
   {
     stateCount = {0,0,0,0,0};
     currentState = 0;
@@ -51,7 +52,7 @@ bool detectQRcode::find(Mat img) {
        if(ptr[col] < 128)
        {
          // We're at a black pixel
-         if(currentState & 0x1)==1)
+         if(currentState == 1 || currentState == 3 )
           {
             // We were counting white pixels
             // So change the state now
@@ -78,7 +79,8 @@ bool detectQRcode::find(Mat img) {
               if(checkRatio(stateCount))
               {
                 // This is where we do some more checks
-               return bool confirmed = isCenter(img, stateCount, row, col);
+                cout << row << endl;
+                isCenter(img, stateCount, row, col);
               }
               else
               {
@@ -104,28 +106,143 @@ bool detectQRcode::find(Mat img) {
           }
        }
     }
-  }    
-
-void detectQRcode::drawBoundary(Mat &img) {
-    if(centers.size()==0) {
-        return;
-    }
-
-    for(int i=0;i<centers.size();i++) {
-        Point2f pt = centers[i];
-        float diff = moduleSize[i]*3.5f;
-
-        Point2f pt1(pt.x-diff, pt.y-diff);
-        Point2f pt2(pt.x+diff, pt.y+diff);
-        rectangle(img, pt1, pt2, CV_RGB(255, 0, 0), 1);
-    }
+  }
+  return true;    
 }
 
+void detectQRcode::drawBoundary(Mat &img) {
+    sortCenters();
+    rectangle(img, corners[0], corners[1], CV_RGB(255, 0, 0), 1, 8, 0);
+    
+}
 
+void detectQRcode::sortCenters() {
+  if(centers.size()==0) {
+        return;
+    }
+    Point2f pt,pt1,pt2,temp;
+    for(unsigned int j=0;j<centers.size();j++) {
+        temp = centers[j];
+        for(unsigned int k=j+1;k<centers.size();k++) {
+            if(temp.x>centers[k].x) {
+              centers[j]=centers[k];
+              centers[k]=temp;
+              temp=centers[j];
+            } 
+        }
+    }
+    temp = centers[0];  
+    if(centers[1].y<temp.y) {
+       centers[0]=centers[1];
+       centers[1]=centers[2];
+       centers[2]=temp;
+    }  
+    else {
+       temp = centers[1];
+       centers[1]=centers[2];
+       centers[2]=temp;
+    }
+    for(unsigned int i=0;i<centers.size();i++) {
+        pt = centers[i];
+        float diff = moduleSize[i]*3.5f;
+        if(i==0) 
+        {
+        pt1.x= pt.x - diff; 
+        pt1.y= pt.y - diff;
+        }
+        if(i==1)
+        pt2.x = pt.x + diff;
+        if(i==2)
+        pt2.y = pt.y + diff;
+        cout << pt.x << " : " << pt.y << endl;
+    }
+    cout << pt1.x << " : " << pt1.y << endl;
+    cout << pt2.x << " : " << pt2.y << endl;
+    corners.push_back(pt1);
+    corners.push_back(pt2);
+}  
+
+void detectQRcode::extractQRcode(Mat &img) {
+   float diff,sum;
+   for(unsigned int i=0; i<moduleSize.size(); i++) {
+      sum+=moduleSize[i];
+   }
+   diff = sum/3;
+   Point2f pt(centers[1].x,centers[2].y);
+   cout << pt.x << " : " << pt.y << endl;
+   centers.push_back(pt);
+   
+   Point2f diff_top = centers[0]-centers[1];
+   Point2f diff_left = centers[0]-centers[2];
+
+    // Calculate the distance between the top-* and *-left points
+    float dist_top = sqrt(diff_top.dot(diff_top));
+    float dist_left = sqrt(diff_left.dot(diff_left));
+
+    int width = (int)round(dist_top/diff);
+    int height = (int)round(dist_left/diff);
+    int dimension = ((width+height)/2) + 7;
+    
+    switch(dimension % 4) {
+        case 0:
+            dimension += 1;
+            break;
+
+        case 1:
+            break;
+
+        case 2:
+            dimension -= 1;
+            break;
+
+        case 3:
+            dimension -= 2;
+            break;
+    }
+    cout << dimension << endl;
+    vector<Point2f> src;
+    src.push_back(Point2f(70, 70));
+    src.push_back(Point2f((dimension - 3.5f)*20, 70));
+    src.push_back(Point2f(70, (dimension - 3.5f)*20));
+    src.push_back(Point2f((dimension - 3.5f)*20, (dimension - 3.5f)*20));
+
+    Mat transform = getPerspectiveTransform(centers, src);
+    warpPerspective(img, img, transform, Size(dimension*20, dimension*20), INTER_AREA);
+}
 /**
  * @brief checks the ratio of W->B,B->W transition
- */       
-bool detectQRcode::checkRatio(int stateCount[])
+ */ 
+void detectQRcode::extractBits(Mat &marker) {
+    const int width = marker.cols;
+    const int height = marker.rows;
+    int blackCount=0;
+    int whiteCount=0;
+   
+    for(int y=0;y<height;y+=20) {
+        for(int x=0;x<width;x+=20) {
+            for(int i=0;i<20;i++) {
+              const uchar* ptr = marker.ptr<uchar>(y+i);
+              for (int j=0;j<20;j++) {
+                 if(ptr[x+j] > 128) {
+                    whiteCount++;
+                 } else {
+                    blackCount++;
+                 }
+              }
+            }
+            if(whiteCount > blackCount) {
+                 cout << 1;
+            } else {
+                 cout << 0;
+            }  
+            blackCount=0;
+            whiteCount=0; 
+      }
+   cout << endl;    
+   }
+}
+      
+bool detectQRcode::checkRatio(vector<int> stateCount)
  {
     int totalCount = 0;
     for(int i=0; i<5; i++)
@@ -152,15 +269,15 @@ bool detectQRcode::checkRatio(int stateCount[])
     return match;
  }
 
-bool detectQRcode::isCenter(const Mat& img, int *stateCount, int row, int col) 
+bool detectQRcode::isCenter(const Mat& img, vector<int> stateCount, int row, int col) 
 {
     int totalCount = 0;
     for(int i=0;i<5;i++) {
         totalCount += stateCount[i];
-    }
+    } 
 
     // Cross check along the vertical axis
-    float centerCol = calcenter(stateCount, col);
+    float centerCol = calcCenter(stateCount, col);
     float centerRow = checkVertical(img, row, (int)centerCol, stateCount[2], totalCount);
     if(isnan(centerRow)) {
         return false;
@@ -200,9 +317,8 @@ bool detectQRcode::isCenter(const Mat& img, int *stateCount, int row, int col)
     } 
     if(!found) {
         centers.push_back(ptNew);
-        estimatedModuleSize.push_back(newEstimatedModuleSize);
+        moduleSize.push_back(newModuleSize);
     }
-
     return false;
 }
 
@@ -246,7 +362,7 @@ float detectQRcode::checkVertical(const Mat& img, int startRow, int centerCol, i
         checkStateCount[3]++;
         row++;
     }
-    if(row==maxRows || checkStateCount[3]>=stateCountTotal) {
+    if(row==maxRows || checkStateCount[3]>=totalCount) {
         return nan;
     }
 
@@ -266,8 +382,15 @@ float detectQRcode::checkVertical(const Mat& img, int startRow, int centerCol, i
         return nan;
     }
 
-    float centerRow = calcCenter(checkStateCount, row);
-    return checkRatio(checkStateCount)?centerRow:nan;
+    double centerRow = calcCenter(checkStateCount, row);
+    if(checkRatio(checkStateCount))
+    {
+      return centerRow;
+    }
+    else
+    {
+      return nan;
+    }
 }
 
 float detectQRcode::checkHorizontal(const Mat& img, int centerRow, int startCol, int centerCount, int totalCount) {
@@ -332,8 +455,15 @@ float detectQRcode::checkHorizontal(const Mat& img, int centerRow, int startCol,
         return nan;
     }
 
-    float centerCol = calcCenter(stateCount, col);
-    return checkRatio(stateCount)?centerCol:nan;
+    double centerCol = calcCenter(stateCount, col);
+    if(checkRatio(stateCount))
+    {
+      return centerCol;
+    }
+    else
+    {
+      return nan;
+    }
 }
 
 bool detectQRcode::checkDiagonal(const Mat &img, float centerRow, float centerCol, int maxCount, int totalCount) {
@@ -346,7 +476,7 @@ bool detectQRcode::checkDiagonal(const Mat &img, float centerRow, float centerCo
         row--;
         col--;
     }
-    if(row<i || col<i) {
+    if(row<0 || col<0) {
         return false;
     }
 
@@ -374,7 +504,7 @@ bool detectQRcode::checkDiagonal(const Mat &img, float centerRow, float centerCo
     row=centerRow+1;
     while(row<maxRows && col<maxCols && img.at<uchar>(row, col)<128) {
         stateCount[2]++;
-        row++:
+        row++;
         col++;
     }
     if(row>=maxRows || col>=maxCols) {
@@ -406,3 +536,7 @@ bool detectQRcode::checkDiagonal(const Mat &img, float centerRow, float centerCo
     return (abs(totalCount - newTotalcount) < 2*totalCount) && checkRatio(stateCount);
 }   
 
+float detectQRcode::calcCenter(vector<int> stateCount, int end)
+{
+ return (float)(end-stateCount[4]-stateCount[3])-(float)stateCount[2]/2.0f;
+}

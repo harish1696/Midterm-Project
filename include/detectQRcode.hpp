@@ -11,18 +11,24 @@ using namespace cv;
 
 class detectQRcode {
 public:
-  bool find(const Mat& img);
-  void drawBoundary(Mat& img);
+  detectQRcode();
+  ~detectQRcode();
+  bool find(Mat &img);
+  void drawBoundary(Mat &img);
+  void extractQRcode(Mat &img);
+  void extractBits(Mat &marker);
   
 private:
   vector<Point2f> centers;
+  vector<Point2f> corners;
   vector<float> moduleSize;
-  bool checkRatio(int* statecount);
-  bool isCenter(const Mat &img, int* stateCount, int row, int col);
+  void sortCenters();
+  bool checkRatio(vector<int> statecount);
+  bool isCenter(const Mat &img, vector<int> stateCount, int row, int col);
   bool checkDiagonal(const Mat &img, float centerRow, float centerCol, int maxCount, int totalCount);
   float checkVertical(const Mat& img, int startRow, int centerCol, int stateCount, int totalCount);
   float checkHorizontal(const Mat& img, int centerRow, int startCol, int stateCount, int totalCount);
-  float calcCenter(int* stateCount, int end);
+  float calcCenter(vector<int> stateCount, int end);
 };
 
 
