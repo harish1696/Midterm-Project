@@ -209,39 +209,10 @@ void detectQRcode::extractQRcode(Mat &img) {
     Mat transform = getPerspectiveTransform(centers, src);
     warpPerspective(img, img, transform, Size(dimension*20, dimension*20), INTER_AREA);
 }
+
 /**
  * @brief checks the ratio of W->B,B->W transition
- */ 
-void detectQRcode::extractBits(Mat &marker) {
-    const int width = marker.cols;
-    const int height = marker.rows;
-    int blackCount=0;
-    int whiteCount=0;
-   
-    for(int y=0;y<height;y+=20) {
-        for(int x=0;x<width;x+=20) {
-            for(int i=0;i<20;i++) {
-              const uchar* ptr = marker.ptr<uchar>(y+i);
-              for (int j=0;j<20;j++) {
-                 if(ptr[x+j] > 128) {
-                    whiteCount++;
-                 } else {
-                    blackCount++;
-                 }
-              }
-            }
-            if(whiteCount > blackCount) {
-                 cout << 1;
-            } else {
-                 cout << 0;
-            }  
-            blackCount=0;
-            whiteCount=0; 
-      }
-   cout << endl;    
-   }
-}
-      
+ */       
 bool detectQRcode::checkRatio(vector<int> stateCount)
  {
     int totalCount = 0;

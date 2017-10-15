@@ -5,6 +5,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgcodecs/imgcodecs.hpp>
 #include <detectQRcode.hpp>
+#include <decodeQRcode.hpp>
 
 using namespace std;
 using namespace cv;
@@ -35,8 +36,10 @@ int main(int argc, char* argv[])
   qr.extractQRcode(img);
   cvtColor(img, imgBW, CV_BGR2GRAY);
   adaptiveThreshold(imgBW, img, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
-  imshow("image", img);
-  qr.extractBits(img);
+  //imshow("image", img);
+  decodeQRcode qr1;
+  qr1.extractBits(img);
+  qr1.getData(qr1.bits);
   waitKey(0);
 
   return 0;

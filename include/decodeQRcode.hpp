@@ -13,15 +13,18 @@ using namespace cv;
 class decodeQRcode {
 public:
   decodeQRcode();
-  ~decodeQRcode(); 
-  vector<int> extractBits(Mat &marker);
-  void demask(vector<int> bits);
-  int getID(vector<int> bits);
-  
+  ~decodeQRcode();
+  void getData(Mat bits); 
+  void extractBits(Mat &code);
+  void demask(vector<int> data);
+  int getID(Mat &bits);
+
+  Mat bits;
+  vector<int> data;
   vector<int> productID;
 private:
-  vector<int> getmask(vector<int> bits);
-  vector<int> getEncoding(vector<int> bits);
+  vector<int> getmask(Mat bits);
+  vector<int> getEncoding(vector<int> data);
   int getLength(vector<int> bits);
   
   int Length;
