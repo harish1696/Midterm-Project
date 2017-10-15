@@ -14,20 +14,20 @@ class decodeQRcode {
 public:
   decodeQRcode();
   ~decodeQRcode();
-  void getData(Mat bits); 
   void extractBits(Mat &code);
-  void demask(vector<int> data);
-  int getID(Mat &bits);
+  void getData(); 
+  void getID();
 
   Mat bits;
   vector<int> data;
   vector<int> productID;
 private:
-  vector<int> getmask(Mat bits);
-  vector<int> getEncoding(vector<int> data);
-  int getLength(vector<int> bits);
+  void demask();
+  vector<int> getMask();
+  int getEncoding();
+  void getLength(int length_bits);
   
-  int Length;
+  int length;
 };
 
 

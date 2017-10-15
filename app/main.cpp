@@ -39,7 +39,10 @@ int main(int argc, char* argv[])
   //imshow("image", img);
   decodeQRcode qr1;
   qr1.extractBits(img);
-  qr1.getData(qr1.bits);
+  qr1.getData();
+  qr1.getID();
+  for(int i=0;i<qr1.productID.size();i++)
+    cout<<endl<<qr1.productID[i]<<endl;
   waitKey(0);
 
   return 0;
