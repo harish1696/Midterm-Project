@@ -17,16 +17,15 @@ public:
   void extractBits(Mat &code);
   void getData(); 
   void getID();
-
-  Mat bits;
-  vector<int> data;
   vector<int> productID;
+
 private:
   void demask();
   vector<int> getMask();
   int getEncoding();
   void getLength(int length_bits);
-  
+  Mat bits;
+  vector<int> data;
   int length;
 };
 
