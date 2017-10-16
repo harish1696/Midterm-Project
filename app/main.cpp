@@ -14,7 +14,7 @@ using namespace cv;
 int main(int argc, char* argv[])
 {
   int count =1;
-  String imageName( "../Qrcode2.JPG" ); // by default
+  String imageName( "../2001.JPG" ); // by default
   if( argc > 1)
     {
         imageName = argv[1];
@@ -33,16 +33,17 @@ int main(int argc, char* argv[])
      cout << count++ << endl;
      qr.drawBoundary(img);
   }
+  imshow("image",img);
   qr.extractQRcode(img);
   cvtColor(img, imgBW, CV_BGR2GRAY);
   adaptiveThreshold(imgBW, img, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
-  //imshow("image", img);
+  imshow("code", img);
   decodeQRcode qr1;
   qr1.extractBits(img);
   qr1.getData();
   qr1.getID();
-  for(int i=0;i<qr1.productID.size();i++)
-    cout<<endl<<qr1.productID[i]<<endl;
+  for(auto& i : qr1.productID)
+    cout<<endl<<i<<endl;
   waitKey(0);
 
   return 0;

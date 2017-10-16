@@ -15,7 +15,7 @@ public:
   ~detectQRcode();
   bool find(Mat &img);
   void drawBoundary(Mat &img);
-  void extractQRcode(Mat &img);
+  bool extractQRcode(Mat &img);
   void extractBits(Mat &marker);
   
 private:

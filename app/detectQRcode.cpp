@@ -107,10 +107,18 @@ bool detectQRcode::find(Mat &img) {
        }
     }
   }
-  return true;    
+  if(centers.size()==0)
+  return false;   
+  else
+  return true; 
 }
 
 void detectQRcode::drawBoundary(Mat &img) {
+    for(auto& i : centers)
+    {
+      if(i.x>img.cols || i.x<1 || i.y>img.rows || i.y<1)
+       return;
+    }
     sortCenters();
     rectangle(img, corners[0], corners[1], CV_RGB(255, 0, 0), 1, 8, 0);
     
@@ -162,7 +170,12 @@ void detectQRcode::sortCenters() {
     corners.push_back(pt2);
 }  
 
-void detectQRcode::extractQRcode(Mat &img) {
+bool detectQRcode::extractQRcode(Mat &img) {
+   for(auto& i : centers)
+   {
+      if(i.x>img.cols || i.x<1 || i.y>img.rows || i.y<1)
+       return false;
+   }
    float diff,sum;
    for(unsigned int i=0; i<moduleSize.size(); i++) {
       sum+=moduleSize[i];
@@ -208,6 +221,7 @@ void detectQRcode::extractQRcode(Mat &img) {
 
     Mat transform = getPerspectiveTransform(centers, src);
     warpPerspective(img, img, transform, Size(dimension*20, dimension*20), INTER_AREA);
+   return true;
 }
 
 /**

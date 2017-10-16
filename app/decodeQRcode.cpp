@@ -98,6 +98,7 @@ void decodeQRcode::demask()
  }
  if(mask[0] == 0 && mask[1] == 0 && mask[2] == 255)
  {
+  cout << "HERE" << endl;
   for(int i=9;i<bits.rows;i++)
    {
     for(int j=13;j<bits.cols;j++)
@@ -217,7 +218,7 @@ void decodeQRcode::demask()
     const uchar* ptr = bits.ptr<uchar>(i);
     for(int j=13;j<bits.cols;j++)
     {
-      if((i/2+j/3)%2==0)
+      if(((i*j)%2+(i*j)%3)==0)
       {
         if(ptr[j]==255) { 
           bits.at<uchar>(i,j) = 0; 
@@ -237,6 +238,7 @@ vector<int> decodeQRcode::getMask()
  mask.push_back(bits.at<uchar>(8,2));
  mask.push_back(bits.at<uchar>(8,3));
  mask.push_back(bits.at<uchar>(8,4));
+ cout << mask[0] << mask[1] << mask[2] << endl;
  return mask;
 }
 
@@ -301,47 +303,92 @@ void decodeQRcode::getData()
    }
  count++;
  }
+ cout << "Pass" << endl;
  for(int k=0;k<96;k++) {
    if(k%24==0) { cout << endl; }
    if(k%2==0) { cout << endl; }
    cout << data[k];
  }
+ cout << "Pass" << endl;
 }
   
 void decodeQRcode::getID()
 {
  int length_bits,ID,k;
- ID = 0;
+ ID = 0; k=0;
  length_bits=getEncoding(); 
  getLength(length_bits);
- if(length == 1)
- { 
-  k=3;
-  for(int i=length_bits+4; i<length_bits+8; i++)
-   {
-    if(data[i] == 0) {
-    ID += pow(2,k);
+ if(length%3==0)
+  {
+    for(int j=0;j<length/3;j++)
+    {
+     k=9;
+     for(int i=length_bits+4+(10*j); i<length_bits+4+(10*(j+1)); i++)
+     {
+      if(data[i] == 0) {
+      ID += pow(2,k);
+      }
+     k--;
+     }
     }
-   k--;
-   }
- }
- else if(length == 2)
- { 
-  k=6;
-  for(int i=length_bits+4; i<length_bits+11; i++)
-   {
-    if(data[i] == 0) {
-    ID += pow(2,k);
+  }
+ else if(length%3==1)
+  {
+   int j;
+   for(j=0;j<length/3;j++)
+    {
+     ID *= pow(1000,j);
+     k=9;
+     for(int i=length_bits+4+(10*j); i<length_bits+4+(10*(j+1)); i++)
+     {
+      if(data[i] == 0) {
+      ID += pow(2,k);
+      }
+     k--;
+     }
     }
-   k--;
+    k=3;
+    ID *= 10;
+    for(int i=length_bits+4+(10*j); i<length_bits+8+(10*j); i++)
+    {
+
+      if(data[i] == 0) {
+      ID += pow(2,k);
+      }
+    k--;
+    }
    }
- }
+ else if(length%3==2)
+  {
+   int j;
+   for(j=0;j<length/3;j++)
+    {
+     ID *= pow(1000,j);
+     k=9;
+     for(int i=length_bits+4+(10*j); i<length_bits+4+(10*(j+1)); i++)
+     {
+      if(data[i] == 0) {
+      ID += pow(2,k);
+      }
+     k--;
+     }
+    }
+    k=6;
+    ID *= 100;
+    for(int i=length_bits+4+(10*j); i<length_bits+11+(10*j); i++)
+    {
+      if(data[i] == 0) {
+      ID += pow(2,k);
+      }
+    k--;
+    }
+  }
  productID.push_back(ID);
 }  
 
 int decodeQRcode::getEncoding()
 {
- int no_bits;
+ int no_bits=0;
  if(data[1]==0) {
    no_bits=8;
    //cout << endl << data[1] << endl; 
