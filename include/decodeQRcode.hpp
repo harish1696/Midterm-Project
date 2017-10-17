@@ -16,7 +16,7 @@ public:
   ~decodeQRcode();
   void extractBits(Mat &code);
   void getData(); 
-  void getID();
+  int getID();
   vector<int> productID;
 
 private:
