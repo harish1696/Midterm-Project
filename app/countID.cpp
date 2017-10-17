@@ -41,7 +41,9 @@ countID::~countID() {}
  */
 void countID::getCount(vector<int> id) {
    // remove the noises in the ID detected in video
-   for(int i=3; i<id.size(); i++) {
+   typedef vector<int>::size_type vec_size;
+   vec_size idsize = id.size();
+   for(unsigned int i=3; i<idsize; i++) {
      if(id[i]!=id[i-1] && id[i]!=id[i-2] && id[i]!=id[i-3] && id[i]!=id[i+1] && id[i]!=id[i+2] && id[i]!=id[i+3]) {
        id[i] = 0;
      }
@@ -61,17 +63,18 @@ void countID::getCount(vector<int> id) {
        id1.push_back(i);
      }
    }
- 
-   for(int i=0; i<id1.size(); i++) {
+   vec_size id1size = id1.size();
+   for(unsigned int i=0; i<id1size; i++) {
      if(id1[i] != id1[i+1]) {
        ID.push_back(id1[i]);
      }
    }  
    // Do the count
+   vec_size IDsize = ID.size();
    a = 1;
-   for(int i=0; i<ID.size(); i++) {
+   for(unsigned int i=0; i<IDsize; i++) {
      if(ID[i] != 0) {
-       for(int j = i+1; j<ID.size(); j++) {
+       for(unsigned int j = i+1; j<IDsize; j++) {
          if(ID[i] == ID[j]) {
            a++;
            ID[j] = 0;
@@ -91,10 +94,12 @@ void countID::getCount(vector<int> id) {
  * @return none
  */      
 void countID::convertTocsv() {
+   typedef vector<int>::size_type vec_size;
    ofstream output;
    output.open("Finalcount.csv");
    output << "ID, Count" << endl;
-   for (int i = 0; i<ID.size(); i++) {
+   vec_size IDsize = ID.size();
+   for (unsigned int i = 0; i<IDsize; i++) {
      output << ID[i] << "," << Count[i] << endl;
    }
 }

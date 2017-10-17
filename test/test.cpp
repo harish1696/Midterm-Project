@@ -35,7 +35,7 @@ TEST(findMethod, should_pass) {
   cvtColor(img, imgBW, CV_BGR2GRAY);
   adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
   bool found = qr.find(imgBW);
-  EXPECT_EQ(true, found);
+  EXPECT_TRUE(found);
   EXPECT_EQ(1,qr.centers[0].x < qr.centers[1].x);
   EXPECT_EQ(1,qr.centers[0].y < qr.centers[2].y);
   EXPECT_EQ(0,qr.centers[2].x > qr.centers[1].x);
@@ -45,7 +45,7 @@ TEST(findMethod, should_pass) {
   cvtColor(img, imgBW, CV_BGR2GRAY);
   adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
   found = qr.find(imgBW);
-  EXPECT_EQ(false, found);
+  EXPECT_FALSE(found);
 }
 
 TEST(drawBoundaryMethod, should_pass) {
@@ -58,7 +58,7 @@ TEST(drawBoundaryMethod, should_pass) {
   cvtColor(img, imgBW, CV_BGR2GRAY);
   adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
   bool found = qr.find(imgBW);
-  ASSERT_EQ(true,found);
+  ASSERT_TRUE(found);
   qr.drawBoundary(img);
 } 
 
@@ -72,10 +72,10 @@ TEST(extractQRcodeMethod, should_pass) {
   cvtColor(img, imgBW, CV_BGR2GRAY);
   adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
   bool found = qr.find(imgBW);
-  ASSERT_EQ(true,found);
+  ASSERT_TRUE(found);
   qr.drawBoundary(img);
   found = qr.extractQRcode(img);
-  ASSERT_EQ(true, found);
+  ASSERT_TRUE(found);
   EXPECT_EQ(420, img.rows);
   EXPECT_EQ(420, img.cols);
 }
@@ -90,10 +90,10 @@ TEST(extractBitsMethod, should_pass) {
    cvtColor(img, imgBW, CV_BGR2GRAY);
    adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
    bool found = qr.find(imgBW);
-   ASSERT_EQ(true,found);
+   ASSERT_TRUE(found);
    qr.drawBoundary(img);
    found = qr.extractQRcode(img);
-   ASSERT_EQ(true, found);
+   ASSERT_TRUE(found);
    cvtColor(img, imgBW, CV_BGR2GRAY);
    adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
    decodeQRcode qr1, qr2;
@@ -103,10 +103,10 @@ TEST(extractBitsMethod, should_pass) {
    cvtColor(img, imgBW, CV_BGR2GRAY);
    adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
    found = qr.find(imgBW);
-   ASSERT_EQ(true,found);
+   ASSERT_TRUE(found);
    qr.drawBoundary(img);
    found = qr.extractQRcode(img);
-   ASSERT_EQ(true, found);
+   ASSERT_TRUE(found);
    cvtColor(img, imgBW, CV_BGR2GRAY);
    adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
    qr2.extractBits(imgBW);
@@ -126,10 +126,10 @@ TEST(getIDMethod, should_pass) {
    cvtColor(img, imgBW, CV_BGR2GRAY);
    adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
    bool found = qr.find(imgBW);
-   ASSERT_EQ(true,found);
+   ASSERT_TRUE(found);
    qr.drawBoundary(img);
    found = qr.extractQRcode(img);
-   ASSERT_EQ(true, found);
+   ASSERT_TRUE(found);
    cvtColor(img, imgBW, CV_BGR2GRAY);
    adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
    decodeQRcode qr1, qr2, qr3;
@@ -141,10 +141,10 @@ TEST(getIDMethod, should_pass) {
    cvtColor(img, imgBW, CV_BGR2GRAY);
    adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
    found = qr.find(imgBW);
-   ASSERT_EQ(true,found);
+   ASSERT_TRUE(found);
    qr.drawBoundary(img);
    found = qr.extractQRcode(img);
-   ASSERT_EQ(true, found);
+   ASSERT_TRUE(found);
    cvtColor(img, imgBW, CV_BGR2GRAY);
    adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
    qr2.extractBits(imgBW);
@@ -155,10 +155,10 @@ TEST(getIDMethod, should_pass) {
    cvtColor(img, imgBW, CV_BGR2GRAY);
    adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
    found = qr.find(imgBW);
-   ASSERT_EQ(true,found);
+   ASSERT_TRUE(found);
    qr.drawBoundary(img);
    found = qr.extractQRcode(img);
-   ASSERT_EQ(true, found);
+   ASSERT_TRUE(found);
    cvtColor(img, imgBW, CV_BGR2GRAY);
    adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 51, 0);
    qr3.extractBits(imgBW);
@@ -168,5 +168,20 @@ TEST(getIDMethod, should_pass) {
    EXPECT_NE(iD1,iD3);
 }
 
+TEST(getCountMethod, should_pass) {
+   vector<int> test, sample;;
+   sample = {44,532,100,2,7,1100};
+   int pID;
+   ifstream input;
+   input.open("../testimages/rawIDs.txt");
+   while(!input.eof()) {
+      input >> pID;
+      test.push_back(pID);
+   }
+   input.close();
+   countID qr;
+   qr.getCount(test);
+   EXPECT_EQ(sample,qr.ID);
+}
 
 

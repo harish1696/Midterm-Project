@@ -29,7 +29,6 @@ using namespace cv;
 
 int main()
 {
-  int count1 =1;
   vector<int> ID;
   String imageName( "../Demo-4.avi" ); // by default
   VideoCapture cap(imageName);
@@ -37,10 +36,9 @@ int main()
   Mat img;
   cap.read(img);
   if(img.empty()) {
-  cout << "END" << endl;
+  cout << "END" << endl; // display END at end of file
   break;
   }
-  cout << img.cols << " : " << img.rows << endl;
   Mat imgBW;
   // convert the image to binary image
   cvtColor(img, imgBW, CV_BGR2GRAY);
@@ -51,7 +49,6 @@ int main()
   bool found = qr.find(imgBW);
   // if image contains QRcode draw boundary around it
   if(found) {
-     cout << count1++ << endl;
      qr.drawBoundary(img);
   }
   // display the image with/without detected QRcode
@@ -70,8 +67,6 @@ int main()
   ID.push_back(qr1.getID());
   }
   ID.push_back(0);
-  //for(auto& i : ID)
-  //  cout<<endl<<i<<endl;
   waitKey(30);
   }
   countID qr2;
