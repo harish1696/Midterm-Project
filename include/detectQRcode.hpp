@@ -18,7 +18,6 @@ public:
   bool extractQRcode(Mat &img);
   
   vector<Point2f> centers;
-  vector<Point2f> corners;
   vector<float> moduleSize;
   
 private:
@@ -30,6 +29,7 @@ private:
   float checkVertical(const Mat& img, int startRow, int centerCol, int stateCount, int totalCount);
   float checkHorizontal(const Mat& img, int centerRow, int startCol, int stateCount, int totalCount);
   float calcCenter(vector<int> stateCount, int end);
+  vector<Point2f> corners;
 };
 
 
