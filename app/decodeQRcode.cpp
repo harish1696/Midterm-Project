@@ -7,8 +7,8 @@
  *
  * @section Description
  *
- * This module helps detect the presence of QRcodes in a given
- * image frame and draw boundaries around it.
+ * This module helps decode the extracted QRcodes by finding
+ * the product ID stored in the Qrcode
  *
  */
 

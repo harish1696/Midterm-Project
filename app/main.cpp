@@ -7,8 +7,8 @@
  *
  * @section Description
  *
- * This module helps detect the presence of QRcodes in a given
- * image frame and draw boundaries around it.
+ * Detection, Decoding and Counting of QRcodes
+ * 
  *
  */
 
@@ -18,8 +18,10 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgcodecs/imgcodecs.hpp>
+#include <algorithm>
 #include <detectQRcode.hpp>
 #include <decodeQRcode.hpp>
+#include <countID.hpp>
 
 using namespace std;
 using namespace cv;
@@ -27,7 +29,7 @@ using namespace cv;
 
 int main()
 {
-  int count =1;
+  int count1 =1;
   vector<int> ID;
   String imageName( "../Demo.avi" ); // by default
   VideoCapture cap(imageName);
@@ -49,7 +51,7 @@ int main()
   bool found = qr.find(imgBW);
   // if image contains QRcode draw boundary around it
   if(found) {
-     cout << count++ << endl;
+     cout << count1++ << endl;
      qr.drawBoundary(img);
   }
   // display the image with/without detected QRcode
@@ -68,15 +70,13 @@ int main()
   ID.push_back(qr1.getID());
   }
   ID.push_back(0);
-  ofstream out;
-  out.open("file.txt");
-  for(auto& i : ID)
-    out<<i<<endl;
-  out.close();
   //for(auto& i : ID)
   //  cout<<endl<<i<<endl;
   waitKey(30);
   }
+  countID qr2;
+  qr2.getCount(ID);
+  qr2.convertTocsv();
   return 0;
 }
 

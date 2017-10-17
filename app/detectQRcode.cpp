@@ -8,7 +8,8 @@
  * @section Description
  *
  * This module helps detect the presence of QRcodes in a given
- * image frame and draw boundaries around it.
+ * image frame, draw boundaries around it and extracts just the
+ * QRcode from the image.
  *
  */
 
@@ -188,59 +189,26 @@ void detectQRcode::sortCenters() {
  * @return false if detection is invalid
  */
 bool detectQRcode::extractQRcode(Mat &img) {
-   for(auto& i : centers) {
+  for(auto& i : centers) {
       if(i.x>img.cols || i.x<1 || i.y>img.rows || i.y<1)
        return false;
-   }
-   float diff,sum;
-   for(unsigned int i=0; i<moduleSize.size(); i++) {
-      sum+=moduleSize[i];
-   }
-   diff = sum/3;
-   Point2f pt(centers[1].x,centers[2].y);
-   cout << pt.x << " : " << pt.y << endl;
-   centers.push_back(pt);
+  }
+  Point2f pt(centers[1].x,centers[2].y);
+  cout << pt.x << " : " << pt.y << endl;
+  centers.push_back(pt);
    
-   Point2f diff_top = centers[0]-centers[1];
-   Point2f diff_left = centers[0]-centers[2];
+  // Version 1 QRcode
+  int dimension = 21;
+  vector<Point2f> src;
+  src.push_back(Point2f(70, 70));
+  src.push_back(Point2f((dimension - 3.5f)*20, 70));
+  src.push_back(Point2f(70, (dimension - 3.5f)*20));
+  src.push_back(Point2f((dimension - 3.5f)*20, (dimension - 3.5f)*20));
 
-    // Calculate the distance between the top-* and *-left points
-    float dist_top = sqrt(diff_top.dot(diff_top));
-    float dist_left = sqrt(diff_left.dot(diff_left));
-
-    int width = (int)round(dist_top/diff);
-    int height = (int)round(dist_left/diff);
-    int dimension = ((width+height)/2) + 7;
-    
-    // Check if the dimension is 21x21
-    switch(dimension % 4) {
-        case 0:
-            dimension += 1;
-            break;
-
-        case 1:
-            break;
-
-        case 2:
-            dimension -= 1;
-            break;
-
-        case 3:
-            dimension -= 2;
-            break;
-    }
-    if(dimension != 21) dimension = 21;
-    cout << dimension << " : " << width << " : " << height << " : " << dist_top << " : " << dist_left << " : " << diff << endl;
-    vector<Point2f> src;
-    src.push_back(Point2f(70, 70));
-    src.push_back(Point2f((dimension - 3.5f)*20, 70));
-    src.push_back(Point2f(70, (dimension - 3.5f)*20));
-    src.push_back(Point2f((dimension - 3.5f)*20, (dimension - 3.5f)*20));
-
-    // extracting just the QRcode from the entire image
-    Mat transform = getPerspectiveTransform(centers, src);
-    warpPerspective(img, img, transform, Size(dimension*20, dimension*20), INTER_AREA);
-   return true;
+  // extracting just the QRcode from the entire image
+  Mat transform = getPerspectiveTransform(centers, src);
+  warpPerspective(img, img, transform, Size(dimension*20, dimension*20), INTER_AREA);
+  return true;
 }
 
 /**
@@ -278,7 +246,7 @@ bool detectQRcode::checkRatio(vector<int> stateCount) {
 /**
  * @brief checks if a particular point is a possible/new center of finder pattern
  * @param img, stateCount, row, col - input image, B->W-B->W->B transition, a pixel in image 
- * @return true if the point is a new center or false
+ * @return false if the row or column goes out of limits or true if it is not
  */
 bool detectQRcode::isCenter(const Mat& img, vector<int> stateCount, int row, int col) {
     int totalCount = 0;
@@ -329,7 +297,7 @@ bool detectQRcode::isCenter(const Mat& img, vector<int> stateCount, int row, int
         centers.push_back(ptNew);
         moduleSize.push_back(newModuleSize);
     }
-    return false;
+    return true;
 }
 
 /**

@@ -1,4 +1,4 @@
-add_executable(shell-app main.cpp detectQRcode.cpp decodeQRcode.cpp)
+add_executable(shell-app main.cpp detectQRcode.cpp decodeQRcode.cpp countID.cpp)
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
     ${OpenCV_INCLUDE_DIRS}
