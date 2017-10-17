@@ -107,8 +107,11 @@ bool detectQRcode::find(Mat &img) {
   }
   if(centers.size()!=3)
   return false;   
-  else
-  return true; 
+  else {
+   // order the centers  
+    sortCenters();
+    return true; 
+  }
 }
 
 /**
@@ -119,14 +122,13 @@ bool detectQRcode::find(Mat &img) {
 void detectQRcode::drawBoundary(Mat &img) {
     // check if the detection is valid
     cout << "HERE" << endl;
-    for(auto& i : centers) {
-      if(i.x>img.cols || i.x<1 || i.y>img.rows || i.y<1) {
-         cout << i.x << " : " << i.y << endl;
-       return;
-      }
-    }
-    // order the centers  
-    sortCenters();
+    //for(auto& i : centers) {
+    //  if(i.x>img.cols || i.x<1 || i.y>img.rows || i.y<1) {
+    //     cout << i.x << " : " << i.y << endl;
+    //   return;
+    //  }
+    //}
+    findCorners();
     // draw boundary around QRcode
     rectangle(img, corners[0], corners[1], CV_RGB(255, 0, 0), 1, 8, 0);  
 }
@@ -162,7 +164,15 @@ void detectQRcode::sortCenters() {
        centers[1]=centers[2];
        centers[2]=temp;
     }
-    // find the corners of the QRcode
+}
+
+/**
+ * @brief find the corners of finder pattern
+ * @param none
+ * @return none
+ */
+void detectQRcode::findCorners() {
+    Point2f pt, pt1, pt2;
     for(unsigned int i=0;i<centers.size();i++) {
         pt = centers[i];
         float diff = moduleSize[i]*3.5f;

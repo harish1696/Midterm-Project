@@ -16,13 +16,14 @@ public:
   bool find(Mat &img);
   void drawBoundary(Mat &img);
   bool extractQRcode(Mat &img);
-  void extractBits(Mat &marker);
   
-private:
   vector<Point2f> centers;
   vector<Point2f> corners;
   vector<float> moduleSize;
+  
+private:
   void sortCenters();
+  void findCorners();
   bool checkRatio(vector<int> statecount);
   bool isCenter(const Mat &img, vector<int> stateCount, int row, int col);
   bool checkDiagonal(const Mat &img, float centerRow, float centerCol, int maxCount, int totalCount);

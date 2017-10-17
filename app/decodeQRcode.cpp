@@ -68,20 +68,10 @@ void decodeQRcode::extractBits(Mat &code) {
             whiteCount=0; 
       }   
    }
-   for(int i=0;i<21;i++) {
-     const uchar* ptr2 = bits.ptr<uchar>(i);
-     for(int j=0;j<21;j++) {
-       if(ptr2[j] >128)
-       cout << 1;
-       else
-       cout << 0;
-     }
-     cout << endl;
-   }
 }
 
 /**
- * @brief Finds the mask used in QRcode and demasks it
+ * @brief Finds the mask used in QRcode and demask it
  * @param none
  * @return none
  */

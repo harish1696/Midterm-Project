@@ -18,13 +18,13 @@ public:
   void getData(); 
   int getID();
   vector<int> productID;
+  Mat bits;
 
 private:
   void demask();
   vector<int> getMask();
   int getEncoding();
   void getLength(int length_bits);
-  Mat bits;
   vector<int> data;
   int length;
 };
