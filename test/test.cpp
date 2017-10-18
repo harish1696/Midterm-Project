@@ -27,8 +27,8 @@ using namespace cv;
 
 TEST(findMethod, should_pass) {
   detectQRcode qr;
-  String imageName1( "../testimages/100.JPG" ); 
-  String imageName2( "../testimages/Lenna.png" );
+  String imageName1( "../testfiles/100.JPG" ); 
+  String imageName2( "../testfiles/Lenna.png" );
   Mat img = imread(imageName1,IMREAD_COLOR);
   resize(img,img,Size(375,500),0,0,CV_INTER_AREA);
   Mat imgBW;
@@ -50,8 +50,8 @@ TEST(findMethod, should_pass) {
 
 TEST(drawBoundaryMethod, should_pass) {
   detectQRcode qr;
-  String imageName1( "../testimages/100.JPG" ); 
-  String imageName2( "../testimages/Lenna.png" );
+  String imageName1( "../testfiles/100.JPG" ); 
+  String imageName2( "../testfiles/Lenna.png" );
   Mat img = imread(imageName1,IMREAD_COLOR);
   resize(img,img,Size(375,500),0,0,CV_INTER_AREA);
   Mat imgBW;
@@ -64,8 +64,8 @@ TEST(drawBoundaryMethod, should_pass) {
 
 TEST(extractQRcodeMethod, should_pass) {
   detectQRcode qr;
-  String imageName1( "../testimages/100.JPG" ); 
-  String imageName2( "../testimages/Lenna.png" );
+  String imageName1( "../testfiles/100.JPG" ); 
+  String imageName2( "../testfiles/Lenna.png" );
   Mat img = imread(imageName1,IMREAD_COLOR);
   resize(img,img,Size(375,500),0,0,CV_INTER_AREA);
   Mat imgBW;
@@ -82,8 +82,8 @@ TEST(extractQRcodeMethod, should_pass) {
   
 TEST(extractBitsMethod, should_pass) {
    detectQRcode qr;
-   String imageName1( "../testimages/100.JPG" );
-   String imageName2( "../testimages/100.JPG" );
+   String imageName1( "../testfiles/100.JPG" );
+   String imageName2( "../testfiles/100.JPG" );
    Mat img = imread(imageName1,IMREAD_COLOR);
    resize(img,img,Size(375,500),0,0,CV_INTER_AREA);
    Mat imgBW;
@@ -117,9 +117,9 @@ TEST(extractBitsMethod, should_pass) {
 
 TEST(getIDMethod, should_pass) {
    detectQRcode qr;
-   String imageName1( "../testimages/100.JPG" );
-   String imageName2( "../testimages/100.JPG" );
-   String imageName3( "../testimages/1101.JPG" );
+   String imageName1( "../testfiles/100.JPG" );
+   String imageName2( "../testfiles/100.JPG" );
+   String imageName3( "../testfiles/1101.JPG" );
    Mat img = imread(imageName1,IMREAD_COLOR);
    resize(img,img,Size(375,500),0,0,CV_INTER_AREA);
    Mat imgBW;
@@ -173,7 +173,7 @@ TEST(getCountMethod, should_pass) {
    sample = {44,532,100,2,7,1100};
    int pID;
    ifstream input;
-   input.open("../testimages/rawIDs.txt");
+   input.open("../testfiles/rawIDs.txt");
    while(!input.eof()) {
       input >> pID;
       test.push_back(pID);

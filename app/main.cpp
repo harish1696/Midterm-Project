@@ -30,7 +30,7 @@ using namespace cv;
 int main()
 {
   vector<int> ID;
-  String imageName( "../Demo-4.avi" ); // by default
+  String imageName( "../testfiles/Demo.avi" ); // by default
   VideoCapture cap(imageName);
   while(1) {
   Mat img;
