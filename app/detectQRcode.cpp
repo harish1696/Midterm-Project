@@ -13,15 +13,18 @@
  *
  */
 
+#include <math.h>
 #include <iostream>
-#include <detectQRcode.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgcodecs/imgcodecs.hpp>
-#include <math.h>
-using namespace std;
+#include <detectQRcode.hpp>
+
+using std::cout;
+using std::endl;
+using std::vector;
 
 #define nan std::numeric_limits<float>::quiet_NaN();
 
@@ -40,51 +43,42 @@ detectQRcode::~detectQRcode() {}
  * @param img input image
  * @return true if Qrcode present or false if not present
  */
-bool detectQRcode::find(Mat &img) {
+bool detectQRcode::find(cv::Mat &img) {
   // clear the previous data each time an image is scanned for QRcode
   centers.clear();
   moduleSize.clear();
   // 3 rows can be skipped each time the image is scanned for QRcode
-  int skipRows=3;
+  int skipRows = 3;
   // each state represents W->B, B->W transitions
-  vector<int> stateCount(5,0);
-  // variable to indicate the current state status 
-  int currentState = 0;  
-
+  vector<int> stateCount(5, 0);
   // scan the image for finder patterns in Qrcode
-  for( int row=0; row<img.rows; row+=skipRows) {
-    stateCount = {0,0,0,0,0};
-    currentState = 0;
+  for (int row = 0; row < img.rows; row += skipRows) {
+    stateCount = {0, 0, 0, 0, 0};
+    int currentState = 0;
     // ptr points to a row of the image
     const uchar* ptr = img.ptr<uchar>(row);
-    for( int col = 0; col<img.cols; col++) {
+    for (int col = 0; col < img.cols; col++) {
        // check if it is black pixel
-       if(ptr[col] < 128) {
+       if (ptr[col] < 128) {
          // if currentState points to white cell change it to black
-         if(currentState == 1 || currentState == 3 ) {
+         if (currentState == 1 || currentState == 3) {
             // W->B transition
             currentState++;
           }
          // count the number of colums with black pixel
          stateCount[currentState]++;
-       }
-       // if not black pixel
-       else {
+       } else {
           // check if currentState points to white cell
-          if((currentState & 0x1)==1) {
+          if ((currentState & 0x1) == 1) {
              // count the number of colums with white pixel
              stateCount[currentState]++;
-          }
-          else {
-            if(currentState==4) {
+          } else {
+             if (currentState == 4) {
               // check if it follows the 1:1:3:1:1 ratio
-              if(checkRatio(stateCount)) {
+              if (checkRatio(stateCount)) {
                 // check if it is a possible center
-                cout << row << endl;
                 isCenter(img, stateCount, row, col);
-              }
-              // if it is white again then this could be 2nd B->W
-              else {
+              } else {
                 currentState = 3;
                 stateCount[0] = stateCount[2];
                 stateCount[1] = stateCount[3];
@@ -93,10 +87,9 @@ bool detectQRcode::find(Mat &img) {
                 stateCount[4] = 0;
                 continue;
               }
-              stateCount = {0,0,0,0,0};
+              stateCount = {0, 0, 0, 0, 0};
               currentState = 0;
-            }  
-            else {
+            } else {
               // B->W transition
               currentState++;
               stateCount[currentState]++;
@@ -105,12 +98,10 @@ bool detectQRcode::find(Mat &img) {
        }
     }
   }
-  if(centers.size()!=3)
-  return false;   
-  else {
-   // order the centers  
-    sortCenters();
-    return true; 
+  if (centers.size() != 3) {
+  return false;
+  } else {
+    return true;
   }
 }
 
@@ -119,18 +110,13 @@ bool detectQRcode::find(Mat &img) {
  * @param img input image
  * @return none
  */
-void detectQRcode::drawBoundary(Mat &img) {
-    // check if the detection is valid
-    cout << "HERE" << endl;
-    //for(auto& i : centers) {
-    //  if(i.x>img.cols || i.x<1 || i.y>img.rows || i.y<1) {
-    //     cout << i.x << " : " << i.y << endl;
-    //   return;
-    //  }
-    //}
-    findCorners();
-    // draw boundary around QRcode
-    rectangle(img, corners[0], corners[1], CV_RGB(255, 0, 0), 1, 8, 0);  
+void detectQRcode::drawBoundary(cv::Mat &img) {
+  // order the centers
+  sortCenters();
+  // find top left and bootom right corners
+  findCorners();
+  // draw boundary around QRcode
+  cv::rectangle(img, corners[0], corners[1], CV_RGB(255, 0, 0), 1, 8, 0);
 }
 
 /**
@@ -139,31 +125,30 @@ void detectQRcode::drawBoundary(Mat &img) {
  * @return none
  */
 void detectQRcode::sortCenters() {
-    if(centers.size()==0) {
-        return;
-    }
-    Point2f pt,pt1,pt2,temp;
-    for(unsigned int j=0;j<centers.size();j++) {
-        temp = centers[j];
-        for(unsigned int k=j+1;k<centers.size();k++) {
-            if(temp.x>centers[k].x) {
-              centers[j]=centers[k];
-              centers[k]=temp;
-              temp=centers[j];
-            } 
-        }
-    }
-    temp = centers[0];  
-    if(centers[1].y<temp.y) {
-       centers[0]=centers[1];
-       centers[1]=centers[2];
-       centers[2]=temp;
-    }  
-    else {
+  if (centers.size() != 3) {
+       return;
+  }
+  cv::Point2f pt, pt1, pt2, temp;
+  for (unsigned int j = 0; j < centers.size(); j++) {
+      temp = centers[j];
+      for (unsigned int k = j+1; k < centers.size(); k++) {
+        if (temp.x > centers[k].x) {
+              centers[j] = centers[k];
+              centers[k] = temp;
+              temp = centers[j];
+            }
+         }
+  }
+  temp = centers[0];
+  if (centers[1].y < temp.y) {
+       centers[0] = centers[1];
+       centers[1] = centers[2];
+       centers[2] = temp;
+  } else {
        temp = centers[1];
-       centers[1]=centers[2];
-       centers[2]=temp;
-    }
+       centers[1] = centers[2];
+       centers[2] = temp;
+  }
 }
 
 /**
@@ -172,52 +157,47 @@ void detectQRcode::sortCenters() {
  * @return none
  */
 void detectQRcode::findCorners() {
-    Point2f pt, pt1, pt2;
-    for(unsigned int i=0;i<centers.size();i++) {
+  cv::Point2f pt, pt1, pt2;
+  for (unsigned int i = 0; i < centers.size(); i++) {
         pt = centers[i];
         float diff = moduleSize[i]*3.5f;
-        if(i==0) 
-        {
-        pt1.x= pt.x - diff; 
-        pt1.y= pt.y - diff;
+        if (i == 0) {
+        pt1.x = pt.x - diff;
+        pt1.y = pt.y - diff;
         }
-        if(i==1)
+        if (i == 1)
         pt2.x = pt.x + diff;
-        if(i==2)
+        if (i == 2)
         pt2.y = pt.y + diff;
-        cout << pt.x << " : " << pt.y << " : " << centers.size() << endl;
-    }
-    cout << pt1.x << " : " << pt1.y << endl;
-    cout << pt2.x << " : " << pt2.y << endl;
-    corners.push_back(pt1);
-    corners.push_back(pt2);
-}  
+  }
+  corners.push_back(pt1);
+  corners.push_back(pt2);
+}
 
 /**
  * @brief extract QRcode from the entire image 
  * @param img imput image
  * @return false if detection is invalid
  */
-bool detectQRcode::extractQRcode(Mat &img) {
-  for(auto& i : centers) {
-      if(i.x>img.cols || i.x<1 || i.y>img.rows || i.y<1)
+bool detectQRcode::extractQRcode(cv::Mat &img) {
+  for (auto& i : centers) {
+      if (i.x > img.cols || i.x < 1 || i.y > img.rows || i.y < 1)
        return false;
   }
-  Point2f pt(centers[1].x,centers[2].y);
-  cout << pt.x << " : " << pt.y << endl;
+  cv::Point2f pt(centers[1].x, centers[2].y);
   centers.push_back(pt);
-   
   // Version 1 QRcode
   int dimension = 21;
   vector<Point2f> src;
-  src.push_back(Point2f(70, 70));
-  src.push_back(Point2f((dimension - 3.5f)*20, 70));
-  src.push_back(Point2f(70, (dimension - 3.5f)*20));
-  src.push_back(Point2f((dimension - 3.5f)*20, (dimension - 3.5f)*20));
+  src.push_back(cv::Point2f(70, 70));
+  src.push_back(cv::Point2f((dimension - 3.5f)*20, 70));
+  src.push_back(cv::Point2f(70, (dimension - 3.5f)*20));
+  src.push_back(cv::Point2f((dimension - 3.5f)*20, (dimension - 3.5f)*20));
 
   // extracting just the QRcode from the entire image
-  Mat transform = getPerspectiveTransform(centers, src);
-  warpPerspective(img, img, transform, Size(dimension*20, dimension*20), INTER_AREA);
+  Mat transform = cv::getPerspectiveTransform(centers, src);
+  cv::warpPerspective(img, img, transform,
+                  Size(dimension*20, dimension*20), INTER_AREA);
   return true;
 }
 
@@ -227,30 +207,28 @@ bool detectQRcode::extractQRcode(Mat &img) {
  * @return true if 1:1:3:1:1 ratio is satisfied or false
  */       
 bool detectQRcode::checkRatio(vector<int> stateCount) {
-    int totalCount = 0;
-    // find the total cols in stateCount
-    for(int i=0; i<5; i++) {
+  int totalCount = 0;
+  // find the total cols in stateCount
+  for (int i = 0; i < 5; i++) {
         int count = stateCount[i];
         totalCount += count;
-        if(count==0)
+        if (count == 0)
             return false;
-    }
-
-    if(totalCount<7)
+  }
+  if (totalCount < 7)
         return false;
 
-    // Calculate the size of one module
-    int moduleSize = ceil(totalCount / 7.0);
-    int maxVariance = moduleSize/2;
-    
-    // checking if the ratio holds 
-    bool match= ((abs(moduleSize - (stateCount[0])) < maxVariance) &&
+  // Calculate the size of one module
+  int moduleSize = ceil(totalCount / 7.0);
+  int maxVariance = moduleSize/2;
+  // checking if the ratio holds
+  bool match = ((abs(moduleSize - (stateCount[0])) < maxVariance) &&
         (abs(moduleSize - (stateCount[1])) < maxVariance) &&
         (abs(3*moduleSize - (stateCount[2])) < 3*maxVariance) &&
         (abs(moduleSize - (stateCount[3])) < maxVariance) &&
         (abs(moduleSize - (stateCount[4])) < maxVariance));
 
-    return match;
+  return match;
 }
 
 /**
@@ -258,56 +236,55 @@ bool detectQRcode::checkRatio(vector<int> stateCount) {
  * @param img, stateCount, row, col - input image, B->W-B->W->B transition, a pixel in image 
  * @return false if the row or column goes out of limits or true if it is not
  */
-bool detectQRcode::isCenter(const Mat& img, vector<int> stateCount, int row, int col) {
-    int totalCount = 0;
-    for(int i=0;i<5;i++) {
+bool detectQRcode::isCenter(const Mat& img,
+                   vector<int> stateCount, int row, int col) {
+  int totalCount = 0;
+  for (int i = 0; i < 5; i++) {
         totalCount += stateCount[i];
-    } 
-
-    // Cross check along the vertical axis
-    float centerCol = calcCenter(stateCount, col);
-    float centerRow = checkVertical(img, row, (int)centerCol, stateCount[2], totalCount);
-    if(isnan(centerRow)) {
+  }
+  // Cross check along the vertical axis
+  float centerCol = calcCenter(stateCount, col);
+  float centerRow = checkVertical(img, row,
+                     centerCol, stateCount[2], totalCount);
+  if (isnan(centerRow)) {
+       return false;
+  }
+  // Cross check along the horizontal axis with the new center-row
+  centerCol = checkHorizontal(img, centerRow,
+              centerCol, stateCount[2], totalCount);
+  if (isnan(centerCol)) {
         return false;
-    }
+  }
 
-    // Cross check along the horizontal axis with the new center-row
-    centerCol = checkHorizontal(img, centerRow, centerCol, stateCount[2], totalCount);
-    if(isnan(centerCol)) {
+  // Cross check along the diagonal with the new center row and col
+  bool validPattern = checkDiagonal(img, centerRow,
+                       centerCol, stateCount[2], totalCount);
+  if (!validPattern) {
         return false;
-    }
-
-    // Cross check along the diagonal with the new center row and col
-    bool validPattern = checkDiagonal(img, centerRow, centerCol, stateCount[2], totalCount);
-    if(!validPattern) {
-        return false;
-    }
-    
-    Point2f ptNew(centerCol, centerRow);
-    float newModuleSize = totalCount / 7.0f;
-    bool found = false;
-    int idx = 0;
-
-    // Definitely a finder pattern - but check if it is new
-    for(Point2f pt : centers) {
-        Point2f diff = pt - ptNew;
-        float dist = (float)sqrt(diff.dot(diff));
-
-        // If the distance between two centers is less than 10px, they're the same.
-        if(dist < 10) {
+  }
+  Point2f ptNew(centerCol, centerRow);
+  float newModuleSize = totalCount / 7.0f;
+  bool found = false;
+  int idx = 0;
+  // Definitely a finder pattern - but check if it is new
+  for (cv::Point2f pt : centers) {
+  Point2f diff = pt - ptNew;
+  float dist = sqrt(diff.dot(diff));
+  // If the distance between two centers is less than 10px, they're the same.
+  if (dist < 10) {
            pt = pt + ptNew;
            pt.x /= 2.0f; pt.y /= 2.0f;
            moduleSize[idx] = (moduleSize[idx] + newModuleSize)/2.0f;
            found = true;
            break;
-        }
-        idx++;
-    } 
-    if(!found) {
+    }
+    idx++;
+  }
+  if (!found) {
         centers.push_back(ptNew);
         moduleSize.push_back(newModuleSize);
-    }
-    return true;
+  }
+  return true;
 }
 
 /**
@@ -317,72 +294,75 @@ bool detectQRcode::isCenter(const Mat& img, vector<int> stateCount, int row, int
  * box,total columns comprising finder pattern  
  * @return the row of the possible center of finder pattern
  */
-float detectQRcode::checkVertical(const Mat& img, int startRow, int centerCol, int centralCount, int totalCount) {
-    int maxRows = img.rows;
-    vector<int> checkStateCount (5,0);
-    int row = startRow;
-    // Traverse above the center
-    while(row>=0 && img.at<uchar>(row, centerCol)<128) {
+float detectQRcode::checkVertical(const cv::Mat& img,
+            int startRow, int centerCol, int centralCount, int totalCount) {
+  int maxRows = img.rows;
+  vector<int> checkStateCount(5, 0);
+  int row = startRow;
+  // Traverse above the center
+  while (row >= 0 && img.at<uchar>(row, centerCol) < 128) {
         checkStateCount[2]++;
         row--;
-    }
-    if(row<0) {
+  }
+  if (row < 0) {
         return nan;
-    }
-    while(row>=0 && img.at<uchar>(row, centerCol)>=128 && checkStateCount[1]<centralCount) {
+  }
+  while (row >= 0 &&
+         img.at<uchar>(row, centerCol) >= 128 &&
+                      checkStateCount[1] < centralCount) {
         checkStateCount[1]++;
         row--;
-    }
-    if(row<0 || checkStateCount[1]>=centralCount) {
+  }
+  if (row < 0 || checkStateCount[1] >= centralCount) {
         return nan;
-    }
-
-    while(row>=0 && img.at<uchar>(row, centerCol)<128 && checkStateCount[0]<centralCount) {
+  }
+  while (row >= 0 &&
+        img.at<uchar>(row, centerCol) < 128 &&
+                     checkStateCount[0] < centralCount) {
         checkStateCount[0]++;
         row--;
-    }
-    if(row<0 || checkStateCount[0]>=centralCount) {
+  }
+  if (row < 0 || checkStateCount[0] >= centralCount) {
         return nan;
-    }
-    // Traverse down the center
-    row = startRow+1;
-    while(row<maxRows && img.at<uchar>(row, centerCol)<128) {
+  }
+  // Traverse down the center
+  row = startRow+1;
+  while (row < maxRows && img.at<uchar>(row, centerCol) < 128) {
         checkStateCount[2]++;
         row++;
-    }
-    if(row==maxRows) {
+  }
+  if (row == maxRows) {
         return nan;
-    }
-
-    while(row<maxRows && img.at<uchar>(row, centerCol)>=128 && checkStateCount[3]<centralCount) {
+  }
+  while (row < maxRows &&
+         img.at<uchar>(row, centerCol) >= 128 &&
+                       checkStateCount[3] < centralCount) {
         checkStateCount[3]++;
         row++;
-    }
-    if(row==maxRows || checkStateCount[3]>=totalCount) {
+  }
+  if (row == maxRows || checkStateCount[3] >= totalCount) {
         return nan;
-    }
-
-    while(row<maxRows && img.at<uchar>(row, centerCol)<128 && checkStateCount[4]<centralCount) {
+  }
+  while (row < maxRows &&
+         img.at<uchar>(row, centerCol) < 128 &&
+                       checkStateCount[4] <centralCount) {
         checkStateCount[4]++;
         row++;
-    }
-    if(row==maxRows || checkStateCount[4]>=centralCount) {
+  }
+  if (row == maxRows || checkStateCount[4] >= centralCount) {
         return nan;
-    }
-    int totalCheckcount = 0;
-    for(int i=0;i<5;i++) {
+  }
+  int totalCheckcount = 0;
+  for (int i = 0; i < 5; i++) {
         totalCheckcount += checkStateCount[i];
-    }
-
-    if(5*abs(totalCheckcount-totalCount) >= 2*totalCount) {
+  }
+  if (5 * abs(totalCheckcount-totalCount) >= 2*totalCount) {
         return nan;
-    }
-
-    double centerRow = calcCenter(checkStateCount, row);
-    if(checkRatio(checkStateCount)) {
+  }
+  double centerRow = calcCenter(checkStateCount, row);
+    if (checkRatio(checkStateCount)) {
       return centerRow;
-    }
-    else {
+    } else {
       return nan;
     }
 }
@@ -394,77 +374,70 @@ float detectQRcode::checkVertical(const Mat& img, int startRow, int centerCol, i
  * box,total columns comprising finder pattern  
  * @return the column of the possible center of finder pattern
  */
-float detectQRcode::checkHorizontal(const Mat& img, int centerRow, int startCol, int centerCount, int totalCount) {
-    int maxCols = img.cols;
-    vector<int> stateCount (5,0);
-
-    int col = startCol;
-    const uchar* ptr = img.ptr<uchar>(centerRow);
-    // traverse towards the left of finder pattern
-    while(col>=0 && ptr[col]<128) {
-        stateCount[2]++;
-        col--;
-    }
-    if(col<0) {
-        return nan;
-    }
-
-    while(col>=0 && ptr[col]>=128 && stateCount[1]<centerCount) {
-        stateCount[1]++;
-        col--;
-    }
-    if(col<0 || stateCount[1]==centerCount) {
-        return nan;
-    }
-
-    while(col>=0 && ptr[col]<128 && stateCount[0]<centerCount) {
-        stateCount[0]++;
-        col--;
-    }
-    if(col<0 || stateCount[0]==centerCount) {
-        return nan;
-    } 
-    col = startCol + 1;
-    // traverse towards the right of finder pattern
-    while(col<maxCols && ptr[col]<128) {
-        stateCount[2]++;
-        col++;
-    }
-    if(col==maxCols) {
-        return nan;
-    }
-  
-    while(col<maxCols && ptr[col]>=128 && stateCount[3]<centerCount) {
-        stateCount[3]++;
-        col++;
-    }
-    if(col==maxCols || stateCount[3]==centerCount) {
-        return nan;
-    }
-
-    while(col<maxCols && ptr[col]<128 && stateCount[4]<centerCount) {
-        stateCount[4]++;
-        col++;
-    }
-    if(col==maxCols || stateCount[4]==centerCount) {
-        return nan;
-    }
-        int newTotalcount = 0;
-    for(int i=0;i<5;i++) {
-        newTotalcount += stateCount[i];
-    }
-
-    if(5*abs(totalCount-newTotalcount) >= totalCount) {
-        return nan;
-    }
-
-    double centerCol = calcCenter(stateCount, col);
-    if(checkRatio(stateCount)) {
-      return centerCol;
-    }
-    else {
+float detectQRcode::checkHorizontal(const cv::Mat& img, int centerRow,
+                       int startCol, int centerCount, int totalCount) {
+  int maxCols = img.cols;
+  vector<int> stateCount(5, 0);
+  int col = startCol;
+  const uchar* ptr = img.ptr<uchar>(centerRow);
+  // traverse towards the left of finder pattern
+  while (col >= 0 && ptr[col] < 128) {
+      stateCount[2]++;
+      col--;
+  }
+  if (col < 0) {
       return nan;
-    }
+  }
+  while (col >= 0 && ptr[col] >= 128 && stateCount[1] < centerCount) {
+      stateCount[1]++;
+      col--;
+  }
+  if (col < 0 || stateCount[1] == centerCount) {
+      return nan;
+  }
+  while (col >= 0 && ptr[col] < 128 && stateCount[0] < centerCount) {
+      stateCount[0]++;
+      col--;
+  }
+  if (col < 0 || stateCount[0] == centerCount) {
+      return nan;
+  }
+  col = startCol + 1;
+  // traverse towards the right of finder pattern
+  while (col < maxCols && ptr[col] < 128) {
+      stateCount[2]++;
+      col++;
+  }
+  if (col == maxCols) {
+      return nan;
+  }
+  while (col < maxCols && ptr[col] >= 128 && stateCount[3] < centerCount) {
+      stateCount[3]++;
+      col++;
+  }
+  if (col == maxCols || stateCount[3] == centerCount) {
+      return nan;
+  }
+  while (col < maxCols && ptr[col] < 128 && stateCount[4] < centerCount) {
+      stateCount[4]++;
+      col++;
+  }
+  if (col == maxCols || stateCount[4] == centerCount) {
+      return nan;
+  }
+  int newTotalcount = 0;
+  for (int i = 0; i < 5; i++) {
+        newTotalcount += stateCount[i];
+  }
+  if (5 * abs(totalCount-newTotalcount) >= totalCount) {
+      return nan;
+  }
+  double centerCol = calcCenter(stateCount, col);
+  if (checkRatio(stateCount)) {
+      return centerCol;
+  } else {
+      return nan;
+  }
 }
 
 /**
@@ -474,78 +447,80 @@ float detectQRcode::checkHorizontal(const Mat& img, int centerRow, int startCol,
  * box,total columns comprising finder pattern  
  * @return true if the ratio still holds
  */
-bool detectQRcode::checkDiagonal(const Mat &img, float centerRow, float centerCol, int maxCount, int totalCount) {
-    vector<int> stateCount (5,0);
-
-    int col=centerCol;
-    int row=centerRow;
-    // traverse towards the top left corner
-    while(col>=0 && row>=0 && img.at<uchar>(row, col)<128) {
+bool detectQRcode::checkDiagonal(const cv::Mat &img, float centerRow,
+                          float centerCol, int maxCount, int totalCount) {
+  vector<int> stateCount(5, 0);
+  int col = centerCol;
+  int row = centerRow;
+  // traverse towards the top left corner
+  while (col >= 0 && row >= 0 &&
+         img.at<uchar>(row, col) < 128) {
         stateCount[2]++;
         row--;
         col--;
-    }
-    if(row<0 || col<0) {
+  }
+  if (row < 0 || col < 0) {
         return false;
-    }
-
-    while(row>=0 && col>=0 && img.at<uchar>(row, col)>=128 && stateCount[1]<=maxCount) {
+  }
+  while (row >= 0 && col >= 0 &&
+         img.at<uchar>(row, col) >= 128 && stateCount[1] <= maxCount) {
         stateCount[1]++;
         row--;
         col--;
-    }
-    if(row<0 || col<0 || stateCount[1]>maxCount) {
+  }
+  if (row < 0 || col < 0 || stateCount[1] > maxCount) {
         return false;
-    }
-
-    while(row>=0 && col>=0 && img.at<uchar>(row, col)<128 && stateCount[0]<=maxCount) {
+  }
+  while (row >= 0 && col >= 0 &&
+         img.at<uchar>(row, col) < 128 && stateCount[0] <= maxCount) {
         stateCount[0]++;
         row--;
         col--;
-    }
-    if(stateCount[0]>maxCount) {
+  }
+  if (stateCount[0] > maxCount) {
         return false;
-    }
-    int maxCols = img.cols;
-    int maxRows = img.rows;
-    
-    col=centerCol+1;
-    row=centerRow+1;
-    // traverse towards the bottom right corner
-    while(row<maxRows && col<maxCols && img.at<uchar>(row, col)<128) {
+  }
+  int maxCols = img.cols;
+  int maxRows = img.rows;
+  col = centerCol+1;
+  row = centerRow+1;
+  // traverse towards the bottom right corner
+  while (row < maxRows && col < maxCols && img.at<uchar>(row, col) < 128) {
         stateCount[2]++;
         row++;
         col++;
-    }
-    if(row>=maxRows || col>=maxCols) {
+  }
+  if (row >= maxRows || col >= maxCols) {
         return false;
-    }
-
-    while(row<maxRows && col<maxCols && img.at<uchar>(row, col)>=128 && stateCount[3]<maxCount) {
+  }
+  while (row < maxRows && col < maxCols &&
+         img.at<uchar>(row, col) >= 128 && stateCount[3] < maxCount) {
         stateCount[3]++;
         row++;
         col++;
-    }
-    if(row>=maxRows || col>=maxCols || stateCount[3]>maxCount) {
+  }
+  if (row >= maxRows || col >= maxCols || stateCount[3] > maxCount) {
         return false;
-    }
-
-    while(row<maxRows && col<maxCols && img.at<uchar>(row, col)<128 && stateCount[4]<maxCount) {
+  }
+  while (row < maxRows && col < maxCols &&
+         img.at<uchar>(row, col) < 128 && stateCount[4] < maxCount) {
         stateCount[4]++;
         row++;
         col++;
-    }
-    if(row>=maxRows || col>=maxCols || stateCount[4]>maxCount) {
+  }
+  if (row >= maxRows || col >= maxCols ||
+             stateCount[4] > maxCount) {
         return false;
-    }
-    int newTotalcount = 0;
-    for(int j=0;j<5;j++) {
+  }
+  int newTotalcount = 0;
+  for (int j = 0; j < 5; j++) {
         newTotalcount += stateCount[j];
-    }
-    
-    // return true if ratio holds
-    return (abs(totalCount - newTotalcount) < 2*totalCount) && checkRatio(stateCount);
-}   
+  }
+  bool possible = (abs(totalCount - newTotalcount) < 2
+                   * totalCount) && checkRatio(stateCount);
+  // return true if ratio holds
+  return possible;
+}
 
 /**
  * @brief calculate center from the end column of finder pattern 
@@ -553,5 +528,6 @@ bool detectQRcode::checkDiagonal(const Mat &img, float centerRow, float centerCo
  * @return center of the finder pattern
  */
 float detectQRcode::calcCenter(vector<int> stateCount, int end) {
- return (float)(end-stateCount[4]-stateCount[3])-(float)stateCount[2]/2.0f;
+  float mid = (end - stateCount[4] - stateCount[3])- stateCount[2] / 2.0f;
+  return mid;
 }
