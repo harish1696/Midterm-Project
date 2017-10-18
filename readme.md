@@ -13,7 +13,12 @@ In this version, the module can detect version 1 QRcodes without any hassle. For
 
 Results:Screenshots
 
+![results 1](https://user-images.githubusercontent.com/13302860/31695313-e822fff4-b377-11e7-9608-052684bddf5b.png)
+![results 2](https://user-images.githubusercontent.com/13302860/31695316-eae83b78-b377-11e7-8807-e2fde1a3fb66.png)
 
+When the end of file is reached, the module performs count operation and yields the following file in the build folder
+
+![spreadsheet](https://user-images.githubusercontent.com/13302860/31695388-5e5f319c-b378-11e7-93bc-984fd397b0dd.png)
 
 ## License
 MIT License
