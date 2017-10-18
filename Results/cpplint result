@@ -1,0 +1,11 @@
+viki@ubuntu:~/Midterm/cpp-boilerplate/app$ cpplint main.cpp
+Done processing main.cpp
+viki@ubuntu:~/Midterm/cpp-boilerplate/app$ cpplint detectQRcode.cpp
+Done processing detectQRcode.cpp
+viki@ubuntu:~/Midterm/cpp-boilerplate/app$ cpplint decodeQRcode.cpp
+Done processing decodeQRcode.cpp
+viki@ubuntu:~/Midterm/cpp-boilerplate/app$ cpplint countID.cpp
+Done processing countID.cpp
+viki@ubuntu:~/Midterm/cpp-boilerplate/test$ cpplint test.cpp
+Done processing test.cpp
+
