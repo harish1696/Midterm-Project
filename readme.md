@@ -127,5 +127,7 @@ Go to your build directory and run the following command
 
 ## How to generate doxygen documentation
 
+```
+doxygen ./Doxygen
   
 

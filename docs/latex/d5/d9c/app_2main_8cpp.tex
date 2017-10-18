@@ -1,0 +1,78 @@
+\hypertarget{app_2main_8cpp}{}\section{app/main.cpp File Reference}
+\label{app_2main_8cpp}\index{app/main.\+cpp@{app/main.\+cpp}}
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$algorithm$>$}\\*
+{\ttfamily \#include $<$opencv2/opencv.\+hpp$>$}\\*
+{\ttfamily \#include $<$opencv2/core/core.\+hpp$>$}\\*
+{\ttfamily \#include $<$opencv2/highgui/highgui.\+hpp$>$}\\*
+{\ttfamily \#include $<$opencv2/imgproc/imgproc.\+hpp$>$}\\*
+{\ttfamily \#include $<$opencv2/imgcodecs/imgcodecs.\+hpp$>$}\\*
+{\ttfamily \#include $<$detect\+Q\+Rcode.\+hpp$>$}\\*
+{\ttfamily \#include $<$decode\+Q\+Rcode.\+hpp$>$}\\*
+{\ttfamily \#include $<$count\+I\+D.\+hpp$>$}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{app_2main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\index{app/main.\+cpp@{app/main.\+cpp}!main@{main}}
+\index{main@{main}!app/main.\+cpp@{app/main.\+cpp}}
+\subsubsection[{\texorpdfstring{main()}{main()}}]{\setlength{\rightskip}{0pt plus 5cm}int main (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{app_2main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{}\label{app_2main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}
+
+\begin{DoxyCode}
+30            \{
+31   vector<int> ID;
+32   String imageName(\textcolor{stringliteral}{"../testfiles/Demo.avi"});  \textcolor{comment}{// by default}
+33   cv::VideoCapture cap(imageName);
+34   \textcolor{keywordflow}{while} (1) \{
+35   cv::Mat img;
+36   cap.read(img);
+37   \textcolor{keywordflow}{if} (img.empty()) \{
+38   cout << \textcolor{stringliteral}{"END"} << endl;  \textcolor{comment}{// display END at end of file}
+39   \textcolor{keywordflow}{break};
+40   \}
+41   cv::Mat imgBW;
+42   \textcolor{comment}{// convert the image to binary image}
+43   cv::cvtColor(img, imgBW, CV\_BGR2GRAY);
+44   cv::adaptiveThreshold(imgBW, imgBW, 255,
+45            CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+46   \textcolor{comment}{// initialize object of class detectQRcode}
+47   \hyperlink{classdetectQRcode}{detectQRcode} qr;
+48   \textcolor{comment}{// check if the image contains QRcode}
+49   \textcolor{keywordtype}{bool} found = qr.\hyperlink{classdetectQRcode_afbac1fead0246a27d3e143bb0f1223f0}{find}(imgBW);
+50   \textcolor{comment}{// if image contains QRcode draw boundary around it}
+51   \textcolor{keywordflow}{if} (found) \{
+52      qr.\hyperlink{classdetectQRcode_af429ccf110e1250e38e2a9fa249ce459}{drawBoundary}(img);
+53   \}
+54   \textcolor{comment}{// display the image with/without detected QRcode}
+55   cv::imshow(\textcolor{stringliteral}{"image"}, img);
+56   \textcolor{comment}{// extract the QRcode and convert it to binary}
+57   \textcolor{keywordflow}{if} (found)
+58   found = qr.\hyperlink{classdetectQRcode_a07eb3b6401b656d0d25f3ddbaec791bc}{extractQRcode}(img);
+59   cv::cvtColor(img, imgBW, CV\_BGR2GRAY);
+60   cv::adaptiveThreshold(imgBW, img, 255,
+61            CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+62   \textcolor{comment}{// intialize object of class decodeQRcode}
+63   \hyperlink{classdecodeQRcode}{decodeQRcode} qr1;
+64   \textcolor{comment}{// get the product ID stored in QRcode}
+65   \textcolor{keywordflow}{if} (found) \{
+66   qr1.\hyperlink{classdecodeQRcode_a5f805f807f0dd0f60e0a1727724dbb47}{extractBits}(img);
+67   qr1.\hyperlink{classdecodeQRcode_ad72967ae804cfbee23ee05f2a82b1fc3}{getData}();
+68   ID.push\_back(qr1.\hyperlink{classdecodeQRcode_a9f5367c400fdd17f4ae09af140b7e604}{getID}());
+69   \}
+70   ID.push\_back(0);
+71   waitKey(30);
+72   \}
+73   \hyperlink{classcountID}{countID} qr2;
+74   qr2.\hyperlink{classcountID_a0f8694fe0a26804d83df3e8f23a378d1}{getCount}(ID);
+75   qr2.\hyperlink{classcountID_a0b9b45d607761e1a9dd1cf44e2381b7c}{convertTocsv}();
+76   \textcolor{keywordflow}{return} 0;
+77 \}
+\end{DoxyCode}

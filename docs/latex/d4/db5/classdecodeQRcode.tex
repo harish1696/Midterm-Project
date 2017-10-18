@@ -1,0 +1,302 @@
+\hypertarget{classdecodeQRcode}{}\section{decode\+Q\+Rcode Class Reference}
+\label{classdecodeQRcode}\index{decode\+Q\+Rcode@{decode\+Q\+Rcode}}
+
+
+{\ttfamily \#include $<$decode\+Q\+Rcode.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classdecodeQRcode_a70b4f300706eba2cf101fa8df5d88f5c}{decode\+Q\+Rcode} ()
+\begin{DoxyCompactList}\small\item\em Constructs a object. \end{DoxyCompactList}\item 
+\hyperlink{classdecodeQRcode_a65a50ce566c4ea9f66791b628c4cc17a}{$\sim$decode\+Q\+Rcode} ()
+\begin{DoxyCompactList}\small\item\em Destroys a object. \end{DoxyCompactList}\item 
+void \hyperlink{classdecodeQRcode_a5f805f807f0dd0f60e0a1727724dbb47}{extract\+Bits} (Mat \&code)
+\begin{DoxyCompactList}\small\item\em Converts the Q\+Rcode into 1\textquotesingle{}s and 0\textquotesingle{}s. \end{DoxyCompactList}\item 
+void \hyperlink{classdecodeQRcode_ad72967ae804cfbee23ee05f2a82b1fc3}{get\+Data} ()
+\begin{DoxyCompactList}\small\item\em Collects the data stored in the form of vector. \end{DoxyCompactList}\item 
+int \hyperlink{classdecodeQRcode_a9f5367c400fdd17f4ae09af140b7e604}{get\+ID} ()
+\begin{DoxyCompactList}\small\item\em Finds the product ID stored in the Q\+Rcode. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ int $>$ \hyperlink{classdecodeQRcode_aec2882b61f6f3694856894a36248a66d}{product\+ID}
+\item 
+Mat \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{decode\+Q\+Rcode@{decode\+Q\+Rcode}!decode\+Q\+Rcode@{decode\+Q\+Rcode}}
+\index{decode\+Q\+Rcode@{decode\+Q\+Rcode}!decode\+Q\+Rcode@{decode\+Q\+Rcode}}
+\subsubsection[{\texorpdfstring{decode\+Q\+Rcode()}{decodeQRcode()}}]{\setlength{\rightskip}{0pt plus 5cm}decode\+Q\+Rcode\+::decode\+Q\+Rcode (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classdecodeQRcode_a70b4f300706eba2cf101fa8df5d88f5c}{}\label{classdecodeQRcode_a70b4f300706eba2cf101fa8df5d88f5c}
+
+
+Constructs a object. 
+
+
+\begin{DoxyCode}
+31                            \{
+32   length = 0;
+33 \}
+\end{DoxyCode}
+\index{decode\+Q\+Rcode@{decode\+Q\+Rcode}!````~decode\+Q\+Rcode@{$\sim$decode\+Q\+Rcode}}
+\index{````~decode\+Q\+Rcode@{$\sim$decode\+Q\+Rcode}!decode\+Q\+Rcode@{decode\+Q\+Rcode}}
+\subsubsection[{\texorpdfstring{$\sim$decode\+Q\+Rcode()}{~decodeQRcode()}}]{\setlength{\rightskip}{0pt plus 5cm}decode\+Q\+Rcode\+::$\sim$decode\+Q\+Rcode (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classdecodeQRcode_a65a50ce566c4ea9f66791b628c4cc17a}{}\label{classdecodeQRcode_a65a50ce566c4ea9f66791b628c4cc17a}
+
+
+Destroys a object. 
+
+
+\begin{DoxyCode}
+38 \{\}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\index{decode\+Q\+Rcode@{decode\+Q\+Rcode}!extract\+Bits@{extract\+Bits}}
+\index{extract\+Bits@{extract\+Bits}!decode\+Q\+Rcode@{decode\+Q\+Rcode}}
+\subsubsection[{\texorpdfstring{extract\+Bits(\+Mat \&code)}{extractBits(Mat &code)}}]{\setlength{\rightskip}{0pt plus 5cm}void decode\+Q\+Rcode\+::extract\+Bits (
+\begin{DoxyParamCaption}
+\item[{Mat \&}]{code}
+\end{DoxyParamCaption}
+)}\hypertarget{classdecodeQRcode_a5f805f807f0dd0f60e0a1727724dbb47}{}\label{classdecodeQRcode_a5f805f807f0dd0f60e0a1727724dbb47}
+
+
+Converts the Q\+Rcode into 1\textquotesingle{}s and 0\textquotesingle{}s. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em code} & an image representing version 1 Q\+Rcode \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+45                                         \{
+46   \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.create(21, 21, CV\_8UC1);
+47   \textcolor{comment}{// initializes variables to count number of white and black cells}
+48   \textcolor{keywordtype}{int} blackCount = 0;
+49   \textcolor{keywordtype}{int} whiteCount = 0;
+50   \textcolor{comment}{// loop to extract the bits stored in the version 1 QRcode}
+51   \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} y = 0; y < code.rows; y += 20) \{
+52      \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} x = 0; x < code.cols; x += 20) \{
+53         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0 ; i < 20 ; i++) \{
+54           \textcolor{keyword}{const} uchar* ptr = code.ptr<uchar>(y + i);
+55           \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} j = 0; j < 20; j++) \{
+56              \textcolor{keywordflow}{if} (ptr[x + j] > 128) \{
+57                 whiteCount++;
+58              \} \textcolor{keywordflow}{else} \{
+59                 blackCount++;
+60              \}
+61           \}
+62         \}
+63         \textcolor{keywordflow}{if} (whiteCount > blackCount) \{
+64         \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(y / 20, x / 20) = 255;
+65          \} \textcolor{keywordflow}{else} \{
+66         \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(y / 20, x / 20) = 0;
+67       \}
+68       blackCount = 0;
+69       whiteCount = 0;
+70      \}
+71   \}
+72 \}
+\end{DoxyCode}
+\index{decode\+Q\+Rcode@{decode\+Q\+Rcode}!get\+Data@{get\+Data}}
+\index{get\+Data@{get\+Data}!decode\+Q\+Rcode@{decode\+Q\+Rcode}}
+\subsubsection[{\texorpdfstring{get\+Data()}{getData()}}]{\setlength{\rightskip}{0pt plus 5cm}void decode\+Q\+Rcode\+::get\+Data (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classdecodeQRcode_ad72967ae804cfbee23ee05f2a82b1fc3}{}\label{classdecodeQRcode_ad72967ae804cfbee23ee05f2a82b1fc3}
+
+
+Collects the data stored in the form of vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em none} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+223                            \{
+224   \textcolor{comment}{// clear the data stored each time a new id is detected}
+225   data.clear();
+226   \textcolor{comment}{// demask the extracted bits of 21x21 QRcode}
+227   demask();
+228   \textcolor{keywordtype}{int} count = 0;
+229   \textcolor{comment}{// traverse the bits of QRcode to extract data stored}
+230   \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.cols - 1; i >= 14; i -= 2) \{
+231   \textcolor{comment}{// traverse bottom to top during odd iterations}
+232   \textcolor{keywordflow}{if} (count % 2 == 0) \{
+233     cout << count << endl;
+234     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} j = \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.rows - 1; j >= 0; j--) \{
+235       \textcolor{comment}{// avoid finder and timing patterns}
+236       \textcolor{keywordflow}{if} (j > 8) \{
+237         \textcolor{keywordflow}{if} (\hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i) == 255 && \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i - 1) == 255) \{
+238           data.push\_back(1);
+239           data.push\_back(1);
+240         \}
+241         \textcolor{keywordflow}{if} (\hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i) == 255 && \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i - 1) == 0) \{
+242           data.push\_back(1);
+243           data.push\_back(0);
+244         \}
+245         \textcolor{keywordflow}{if} (\hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i) == 0 && \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i - 1) == 255) \{
+246          data.push\_back(0);
+247          data.push\_back(1);
+248         \}
+249         \textcolor{keywordflow}{if} (\hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i) == 0 && \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i - 1) == 0) \{
+250           data.push\_back(0);
+251           data.push\_back(0);
+252         \}
+253       \}
+254     \}
+255   \}
+256   \textcolor{comment}{// traverse top to bottom during odd iterations}
+257   \textcolor{keywordflow}{if} (count % 2 != 0) \{
+258     cout << count << endl;
+259     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} j = 0; j < \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.rows; j++) \{
+260       \textcolor{comment}{// avoid finder and timing patterns}
+261       \textcolor{keywordflow}{if} (j > 8) \{
+262         \textcolor{keywordflow}{if} (\hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i) == 255 && \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i - 1) == 255) \{
+263           data.push\_back(1);
+264           data.push\_back(1);
+265         \}
+266         \textcolor{keywordflow}{if} (\hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i) == 255 && \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i - 1) == 0) \{
+267           data.push\_back(1);
+268           data.push\_back(0);
+269         \}
+270         \textcolor{keywordflow}{if} (\hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i) == 0 && \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i - 1) == 255) \{
+271          data.push\_back(0);
+272          data.push\_back(1);
+273         \}
+274         \textcolor{keywordflow}{if} (\hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i) == 0 && \hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(j, i - 1) == 0) \{
+275           data.push\_back(0);
+276           data.push\_back(0);
+277         \}
+278       \}
+279     \}
+280   \}
+281   count++;
+282   \}
+283 \}
+\end{DoxyCode}
+\index{decode\+Q\+Rcode@{decode\+Q\+Rcode}!get\+ID@{get\+ID}}
+\index{get\+ID@{get\+ID}!decode\+Q\+Rcode@{decode\+Q\+Rcode}}
+\subsubsection[{\texorpdfstring{get\+I\+D()}{getID()}}]{\setlength{\rightskip}{0pt plus 5cm}int decode\+Q\+Rcode\+::get\+ID (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classdecodeQRcode_a9f5367c400fdd17f4ae09af140b7e604}{}\label{classdecodeQRcode_a9f5367c400fdd17f4ae09af140b7e604}
+
+
+Finds the product ID stored in the Q\+Rcode. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em none} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+290                           \{
+291   \textcolor{keywordtype}{int} length\_bits, ID, k;
+292   ID = 0;
+293   k = 0;
+294   \textcolor{comment}{// find the encoding scheme used}
+295   length\_bits = getEncoding();
+296   \textcolor{comment}{// find the length of the data}
+297   getLength(length\_bits);
+298   \textcolor{comment}{// find the 3 numeric digits stored for every 10 bits}
+299   \textcolor{keywordflow}{if} (length % 3 == 0) \{
+300     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} j = 0; j < length / 3; j++) \{
+301      k = 9;
+302      \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = length\_bits + 4 + (10 * j);
+303           i < length\_bits + 4 + (10 * (j + 1)); i++) \{
+304       \textcolor{keywordflow}{if} (data[i] == 0) \{
+305        ID += pow(2, k);
+306       \}
+307      k--;
+308      \}
+309     \}
+310   \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (length % 3 == 1) \{
+311   \textcolor{keywordtype}{int} j;
+312   \textcolor{keywordflow}{for} (j = 0; j < length / 3; j++) \{
+313      ID *= pow(1000, j);
+314      k = 9;
+315      \textcolor{keywordflow}{for} ( \textcolor{keywordtype}{int} i = length\_bits + 4 + (10 * j);
+316                   i < length\_bits + 4 + (10 * (j + 1)); i++) \{
+317       \textcolor{keywordflow}{if} (data[i] == 0) \{
+318        ID += pow(2, k);
+319       \}
+320      k--;
+321      \}
+322     \}
+323     k = 3;
+324     ID *= 10;
+325     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = length\_bits + 4 + (10 * j);
+326           i < length\_bits + 8 + (10 * j); i++) \{
+327       \textcolor{keywordflow}{if} (data[i] == 0) \{
+328        ID += pow(2, k);
+329       \}
+330     k--;
+331     \}
+332   \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (length % 3 == 2) \{
+333   \textcolor{keywordtype}{int} j;
+334   \textcolor{keywordflow}{for} (j = 0; j < length / 3; j++) \{
+335      ID *= pow(1000, j);
+336      k = 9;
+337      \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = length\_bits + 4 + (10 * j);
+338            i < length\_bits + 4 + (10 * (j + 1)); i++) \{
+339       \textcolor{keywordflow}{if} (data[i] == 0) \{
+340        ID += pow(2, k);
+341       \}
+342      k--;
+343      \}
+344     \}
+345     k = 6;
+346     ID *= 100;
+347     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = length\_bits + 4 + (10 * j);
+348             i < length\_bits + 11 + (10 * j); i++) \{
+349       \textcolor{keywordflow}{if} (data[i] == 0) \{
+350         ID += pow(2, k);
+351       \}
+352     k--;
+353     \}
+354   \}
+355   \textcolor{comment}{// store the product ID}
+356   \textcolor{keywordflow}{return} ID;
+357 \}
+\end{DoxyCode}
+
+
+\subsection{Member Data Documentation}
+\index{decode\+Q\+Rcode@{decode\+Q\+Rcode}!bits@{bits}}
+\index{bits@{bits}!decode\+Q\+Rcode@{decode\+Q\+Rcode}}
+\subsubsection[{\texorpdfstring{bits}{bits}}]{\setlength{\rightskip}{0pt plus 5cm}Mat decode\+Q\+Rcode\+::bits}\hypertarget{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{}\label{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}
+\index{decode\+Q\+Rcode@{decode\+Q\+Rcode}!product\+ID@{product\+ID}}
+\index{product\+ID@{product\+ID}!decode\+Q\+Rcode@{decode\+Q\+Rcode}}
+\subsubsection[{\texorpdfstring{product\+ID}{productID}}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$int$>$ decode\+Q\+Rcode\+::product\+ID}\hypertarget{classdecodeQRcode_aec2882b61f6f3694856894a36248a66d}{}\label{classdecodeQRcode_aec2882b61f6f3694856894a36248a66d}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{decodeQRcode_8hpp}{decode\+Q\+Rcode.\+hpp}\item 
+app/\hyperlink{decodeQRcode_8cpp}{decode\+Q\+Rcode.\+cpp}\end{DoxyCompactItemize}

@@ -1,0 +1,176 @@
+\hypertarget{classcountID}{}\section{count\+ID Class Reference}
+\label{classcountID}\index{count\+ID@{count\+ID}}
+
+
+{\ttfamily \#include $<$count\+I\+D.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classcountID_a3f845241ec2577f4789177114384fdba}{count\+ID} ()
+\begin{DoxyCompactList}\small\item\em Constructs a object. \end{DoxyCompactList}\item 
+\hyperlink{classcountID_a61c8d741bd3e39a4c3331a82e8107f8f}{$\sim$count\+ID} ()
+\begin{DoxyCompactList}\small\item\em Destroys a object. \end{DoxyCompactList}\item 
+void \hyperlink{classcountID_a0f8694fe0a26804d83df3e8f23a378d1}{get\+Count} (vector$<$ int $>$ id)
+\begin{DoxyCompactList}\small\item\em Finds the no. of occurences of each Product ID. \end{DoxyCompactList}\item 
+void \hyperlink{classcountID_a0b9b45d607761e1a9dd1cf44e2381b7c}{convert\+Tocsv} ()
+\begin{DoxyCompactList}\small\item\em Convert the ID and count in a presentable form. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ int $>$ \hyperlink{classcountID_ab579fb8cf43eaaf5e56ff9efec53be7b}{Count}
+\item 
+vector$<$ int $>$ \hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID}
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{count\+ID@{count\+ID}!count\+ID@{count\+ID}}
+\index{count\+ID@{count\+ID}!count\+ID@{count\+ID}}
+\subsubsection[{\texorpdfstring{count\+I\+D()}{countID()}}]{\setlength{\rightskip}{0pt plus 5cm}count\+I\+D\+::count\+ID (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classcountID_a3f845241ec2577f4789177114384fdba}{}\label{classcountID_a3f845241ec2577f4789177114384fdba}
+
+
+Constructs a object. 
+
+
+\begin{DoxyCode}
+30 \{\}
+\end{DoxyCode}
+\index{count\+ID@{count\+ID}!````~count\+ID@{$\sim$count\+ID}}
+\index{````~count\+ID@{$\sim$count\+ID}!count\+ID@{count\+ID}}
+\subsubsection[{\texorpdfstring{$\sim$count\+I\+D()}{~countID()}}]{\setlength{\rightskip}{0pt plus 5cm}count\+I\+D\+::$\sim$count\+ID (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classcountID_a61c8d741bd3e39a4c3331a82e8107f8f}{}\label{classcountID_a61c8d741bd3e39a4c3331a82e8107f8f}
+
+
+Destroys a object. 
+
+
+\begin{DoxyCode}
+35 \{\}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\index{count\+ID@{count\+ID}!convert\+Tocsv@{convert\+Tocsv}}
+\index{convert\+Tocsv@{convert\+Tocsv}!count\+ID@{count\+ID}}
+\subsubsection[{\texorpdfstring{convert\+Tocsv()}{convertTocsv()}}]{\setlength{\rightskip}{0pt plus 5cm}void count\+I\+D\+::convert\+Tocsv (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classcountID_a0b9b45d607761e1a9dd1cf44e2381b7c}{}\label{classcountID_a0b9b45d607761e1a9dd1cf44e2381b7c}
+
+
+Convert the ID and count in a presentable form. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em none} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+95                            \{
+96   \textcolor{keyword}{typedef} vector<int>::size\_type vec\_size;
+97   ofstream output;
+98   output.open(\textcolor{stringliteral}{"Finalcount.csv"});
+99   output << \textcolor{stringliteral}{"ID, Count"} << endl;
+100   vec\_size IDsize = \hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID}.size();
+101   \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < IDsize; i++) \{
+102     output << \hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID}[i] << \textcolor{stringliteral}{","} << \hyperlink{classcountID_ab579fb8cf43eaaf5e56ff9efec53be7b}{Count}[i] << endl;
+103   \}
+104 \}
+\end{DoxyCode}
+\index{count\+ID@{count\+ID}!get\+Count@{get\+Count}}
+\index{get\+Count@{get\+Count}!count\+ID@{count\+ID}}
+\subsubsection[{\texorpdfstring{get\+Count(vector$<$ int $>$ id)}{getCount(vector< int > id)}}]{\setlength{\rightskip}{0pt plus 5cm}void count\+I\+D\+::get\+Count (
+\begin{DoxyParamCaption}
+\item[{vector$<$ int $>$}]{id}
+\end{DoxyParamCaption}
+)}\hypertarget{classcountID_a0f8694fe0a26804d83df3e8f23a378d1}{}\label{classcountID_a0f8694fe0a26804d83df3e8f23a378d1}
+
+
+Finds the no. of occurences of each Product ID. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & all the ids collected from video file \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+42                                      \{
+43   \textcolor{comment}{// remove the noises in the ID detected in video}
+44   \textcolor{keyword}{typedef} vector<int>::size\_type vec\_size;
+45   vec\_size idsize = \textcolor{keywordtype}{id}.size();
+46   \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 3; i < idsize; i++) \{
+47     \textcolor{keywordflow}{if} (\textcolor{keywordtype}{id}[i] != \textcolor{keywordtype}{id}[i-1] && \textcolor{keywordtype}{id}[i] != \textcolor{keywordtype}{id}[i-2] && \textcolor{keywordtype}{id}[i] != \textcolor{keywordtype}{id}[i-3]
+48        && \textcolor{keywordtype}{id}[i] != \textcolor{keywordtype}{id}[i+1] && \textcolor{keywordtype}{id}[i] != \textcolor{keywordtype}{id}[i+2] && \textcolor{keywordtype}{id}[i] != \textcolor{keywordtype}{id}[i+3]) \{
+49        \textcolor{keywordtype}{id}[i] = 0;
+50     \}
+51   \}
+52   \textcolor{keywordtype}{int} a, c;
+53   vector<int> id1;
+54   \textcolor{comment}{// differentiate identical ID's appearing consecutively}
+55   \textcolor{keywordflow}{for} (\textcolor{keyword}{auto}  i : \textcolor{keywordtype}{id}) \{
+56     \textcolor{keywordflow}{if} (i == 0) \{
+57        c++;
+58     \} \textcolor{keywordflow}{else} \{
+59       \textcolor{keywordflow}{if} (c > 15) \{
+60         id1.push\_back(0);
+61       \}
+62       c = 0;
+63       id1.push\_back(i);
+64     \}
+65   \}
+66   vec\_size id1size = id1.size();
+67   \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < id1size; i++) \{
+68     \textcolor{keywordflow}{if} (id1[i] != id1[i+1]) \{
+69        \hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID}.push\_back(id1[i]);
+70     \}
+71   \}
+72   \textcolor{comment}{// Do the count}
+73   vec\_size IDsize = \hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID}.size();
+74   a = 1;
+75   \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < IDsize; i++) \{
+76     \textcolor{keywordflow}{if} (\hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID}[i] != 0) \{
+77       \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i+1; j < IDsize; j++) \{
+78         \textcolor{keywordflow}{if} (\hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID}[i] == \hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID}[j]) \{
+79           a++;
+80           \hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID}[j] = 0;
+81         \}
+82       \}
+83       \hyperlink{classcountID_ab579fb8cf43eaaf5e56ff9efec53be7b}{Count}.push\_back(a);
+84       a = 1;
+85     \}
+86   \}
+87   \hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID}.erase(std::remove(\hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID}.begin(), \hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID}.end(), 0), \hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID}.end());
+88 \}
+\end{DoxyCode}
+
+
+\subsection{Member Data Documentation}
+\index{count\+ID@{count\+ID}!Count@{Count}}
+\index{Count@{Count}!count\+ID@{count\+ID}}
+\subsubsection[{\texorpdfstring{Count}{Count}}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$int$>$ count\+I\+D\+::\+Count}\hypertarget{classcountID_ab579fb8cf43eaaf5e56ff9efec53be7b}{}\label{classcountID_ab579fb8cf43eaaf5e56ff9efec53be7b}
+\index{count\+ID@{count\+ID}!ID@{ID}}
+\index{ID@{ID}!count\+ID@{count\+ID}}
+\subsubsection[{\texorpdfstring{ID}{ID}}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$int$>$ count\+I\+D\+::\+ID}\hypertarget{classcountID_aa19098f252bab94e0c50937e5a189eb5}{}\label{classcountID_aa19098f252bab94e0c50937e5a189eb5}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{countID_8hpp}{count\+I\+D.\+hpp}\item 
+app/\hyperlink{countID_8cpp}{count\+I\+D.\+cpp}\end{DoxyCompactItemize}

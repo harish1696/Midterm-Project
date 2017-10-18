@@ -1,0 +1,262 @@
+\hypertarget{test_8cpp}{}\section{test/test.cpp File Reference}
+\label{test_8cpp}\index{test/test.\+cpp@{test/test.\+cpp}}
+{\ttfamily \#include $<$gtest/gtest.\+h$>$}\\*
+{\ttfamily \#include $<$detect\+Q\+Rcode.\+hpp$>$}\\*
+{\ttfamily \#include $<$decode\+Q\+Rcode.\+hpp$>$}\\*
+{\ttfamily \#include $<$count\+I\+D.\+hpp$>$}\\*
+{\ttfamily \#include $<$opencv2/opencv.\+hpp$>$}\\*
+{\ttfamily \#include $<$opencv2/core/core.\+hpp$>$}\\*
+{\ttfamily \#include $<$opencv2/highgui/highgui.\+hpp$>$}\\*
+{\ttfamily \#include $<$opencv2/imgproc/imgproc.\+hpp$>$}\\*
+{\ttfamily \#include $<$opencv2/imgcodecs/imgcodecs.\+hpp$>$}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{test_8cpp_a1dcc76871503b030b9dea28f5ea53724}{T\+E\+ST} (find\+Method, should\+\_\+pass)
+\item 
+\hyperlink{test_8cpp_a8cac7a6b5f5b646d32300338d20c2be2}{T\+E\+ST} (draw\+Boundary\+Method, should\+\_\+pass)
+\item 
+\hyperlink{test_8cpp_a30b7947cfbec7475e29466e782c0e580}{T\+E\+ST} (extract\+Q\+Rcode\+Method, should\+\_\+pass)
+\item 
+\hyperlink{test_8cpp_a9bf3b0e5965a46ffc054082ea8accffb}{T\+E\+ST} (extract\+Bits\+Method, should\+\_\+pass)
+\item 
+\hyperlink{test_8cpp_a097540b54ef25816ca18aca1af540f9b}{T\+E\+ST} (get\+I\+D\+Method, should\+\_\+pass)
+\item 
+\hyperlink{test_8cpp_a111c1d569af0b2731ff36ccdbadc02bf}{T\+E\+ST} (get\+Count\+Method, should\+\_\+pass)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\index{test.\+cpp@{test.\+cpp}!T\+E\+ST@{T\+E\+ST}}
+\index{T\+E\+ST@{T\+E\+ST}!test.\+cpp@{test.\+cpp}}
+\subsubsection[{\texorpdfstring{T\+E\+S\+T(find\+Method, should\+\_\+pass)}{TEST(findMethod, should_pass)}}]{\setlength{\rightskip}{0pt plus 5cm}T\+E\+ST (
+\begin{DoxyParamCaption}
+\item[{find\+Method}]{, }
+\item[{should\+\_\+pass}]{}
+\end{DoxyParamCaption}
+)}\hypertarget{test_8cpp_a1dcc76871503b030b9dea28f5ea53724}{}\label{test_8cpp_a1dcc76871503b030b9dea28f5ea53724}
+
+\begin{DoxyCode}
+31                               \{
+32   \hyperlink{classdetectQRcode}{detectQRcode} qr;
+33   String imageName1(\textcolor{stringliteral}{"../testfiles/100.JPG"});
+34   String imageName2(\textcolor{stringliteral}{"../testfiles/Lenna.png"});
+35   Mat img = imread(imageName1, IMREAD\_COLOR);
+36   resize(img, img, Size(375, 500), 0, 0, CV\_INTER\_AREA);
+37   Mat imgBW;
+38   cvtColor(img, imgBW, CV\_BGR2GRAY);
+39   adaptiveThreshold(imgBW, imgBW, 255,
+40           CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+41   \textcolor{keywordtype}{bool} found = qr.\hyperlink{classdetectQRcode_afbac1fead0246a27d3e143bb0f1223f0}{find}(imgBW);
+42   EXPECT\_TRUE(found);
+43   EXPECT\_EQ(1, qr.\hyperlink{classdetectQRcode_afe6facdb30c910a01e4f607d108a5db5}{centers}[0].x < qr.\hyperlink{classdetectQRcode_afe6facdb30c910a01e4f607d108a5db5}{centers}[1].x);
+44   EXPECT\_EQ(1, qr.\hyperlink{classdetectQRcode_afe6facdb30c910a01e4f607d108a5db5}{centers}[0].y < qr.\hyperlink{classdetectQRcode_afe6facdb30c910a01e4f607d108a5db5}{centers}[2].y);
+45   EXPECT\_EQ(0, qr.\hyperlink{classdetectQRcode_afe6facdb30c910a01e4f607d108a5db5}{centers}[2].x > qr.\hyperlink{classdetectQRcode_afe6facdb30c910a01e4f607d108a5db5}{centers}[1].x);
+46   EXPECT\_EQ(0, qr.\hyperlink{classdetectQRcode_afe6facdb30c910a01e4f607d108a5db5}{centers}[1].y > qr.\hyperlink{classdetectQRcode_afe6facdb30c910a01e4f607d108a5db5}{centers}[2].y);
+47   img = imread(imageName2, IMREAD\_COLOR);
+48   resize(img, img, Size(375, 500), 0, 0, CV\_INTER\_AREA);
+49   cvtColor(img, imgBW, CV\_BGR2GRAY);
+50   adaptiveThreshold(imgBW, imgBW, 255,
+51        CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+52   found = qr.\hyperlink{classdetectQRcode_afbac1fead0246a27d3e143bb0f1223f0}{find}(imgBW);
+53   EXPECT\_FALSE(found);
+54 \}
+\end{DoxyCode}
+\index{test.\+cpp@{test.\+cpp}!T\+E\+ST@{T\+E\+ST}}
+\index{T\+E\+ST@{T\+E\+ST}!test.\+cpp@{test.\+cpp}}
+\subsubsection[{\texorpdfstring{T\+E\+S\+T(draw\+Boundary\+Method, should\+\_\+pass)}{TEST(drawBoundaryMethod, should_pass)}}]{\setlength{\rightskip}{0pt plus 5cm}T\+E\+ST (
+\begin{DoxyParamCaption}
+\item[{draw\+Boundary\+Method}]{, }
+\item[{should\+\_\+pass}]{}
+\end{DoxyParamCaption}
+)}\hypertarget{test_8cpp_a8cac7a6b5f5b646d32300338d20c2be2}{}\label{test_8cpp_a8cac7a6b5f5b646d32300338d20c2be2}
+
+\begin{DoxyCode}
+56                                       \{
+57   \hyperlink{classdetectQRcode}{detectQRcode} qr;
+58   String imageName1(\textcolor{stringliteral}{"../testfiles/100.JPG"});
+59   String imageName2(\textcolor{stringliteral}{"../testfiles/Lenna.png"});
+60   Mat img = imread(imageName1, IMREAD\_COLOR);
+61   resize(img, img, Size(375, 500), 0, 0, CV\_INTER\_AREA);
+62   Mat imgBW;
+63   cvtColor(img, imgBW, CV\_BGR2GRAY);
+64   adaptiveThreshold(imgBW, imgBW, 255,
+65             CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+66   \textcolor{keywordtype}{bool} found = qr.\hyperlink{classdetectQRcode_afbac1fead0246a27d3e143bb0f1223f0}{find}(imgBW);
+67   ASSERT\_TRUE(found);
+68   qr.\hyperlink{classdetectQRcode_af429ccf110e1250e38e2a9fa249ce459}{drawBoundary}(img);
+69 \}
+\end{DoxyCode}
+\index{test.\+cpp@{test.\+cpp}!T\+E\+ST@{T\+E\+ST}}
+\index{T\+E\+ST@{T\+E\+ST}!test.\+cpp@{test.\+cpp}}
+\subsubsection[{\texorpdfstring{T\+E\+S\+T(extract\+Q\+Rcode\+Method, should\+\_\+pass)}{TEST(extractQRcodeMethod, should_pass)}}]{\setlength{\rightskip}{0pt plus 5cm}T\+E\+ST (
+\begin{DoxyParamCaption}
+\item[{extract\+Q\+Rcode\+Method}]{, }
+\item[{should\+\_\+pass}]{}
+\end{DoxyParamCaption}
+)}\hypertarget{test_8cpp_a30b7947cfbec7475e29466e782c0e580}{}\label{test_8cpp_a30b7947cfbec7475e29466e782c0e580}
+
+\begin{DoxyCode}
+71                                        \{
+72   \hyperlink{classdetectQRcode}{detectQRcode} qr;
+73   String imageName1(\textcolor{stringliteral}{"../testfiles/100.JPG"});
+74   String imageName2(\textcolor{stringliteral}{"../testfiles/Lenna.png"});
+75   Mat img = imread(imageName1, IMREAD\_COLOR);
+76   resize(img, img, Size(375, 500), 0, 0, CV\_INTER\_AREA);
+77   Mat imgBW;
+78   cvtColor(img, imgBW, CV\_BGR2GRAY);
+79   adaptiveThreshold(imgBW, imgBW,
+80           255, CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+81   \textcolor{keywordtype}{bool} found = qr.\hyperlink{classdetectQRcode_afbac1fead0246a27d3e143bb0f1223f0}{find}(imgBW);
+82   ASSERT\_TRUE(found);
+83   qr.\hyperlink{classdetectQRcode_af429ccf110e1250e38e2a9fa249ce459}{drawBoundary}(img);
+84   found = qr.\hyperlink{classdetectQRcode_a07eb3b6401b656d0d25f3ddbaec791bc}{extractQRcode}(img);
+85   ASSERT\_TRUE(found);
+86   EXPECT\_EQ(420, img.rows);
+87   EXPECT\_EQ(420, img.cols);
+88 \}
+\end{DoxyCode}
+\index{test.\+cpp@{test.\+cpp}!T\+E\+ST@{T\+E\+ST}}
+\index{T\+E\+ST@{T\+E\+ST}!test.\+cpp@{test.\+cpp}}
+\subsubsection[{\texorpdfstring{T\+E\+S\+T(extract\+Bits\+Method, should\+\_\+pass)}{TEST(extractBitsMethod, should_pass)}}]{\setlength{\rightskip}{0pt plus 5cm}T\+E\+ST (
+\begin{DoxyParamCaption}
+\item[{extract\+Bits\+Method}]{, }
+\item[{should\+\_\+pass}]{}
+\end{DoxyParamCaption}
+)}\hypertarget{test_8cpp_a9bf3b0e5965a46ffc054082ea8accffb}{}\label{test_8cpp_a9bf3b0e5965a46ffc054082ea8accffb}
+
+\begin{DoxyCode}
+90                                      \{
+91   \hyperlink{classdetectQRcode}{detectQRcode} qr;
+92   String imageName1(\textcolor{stringliteral}{"../testfiles/100.JPG"});
+93   String imageName2(\textcolor{stringliteral}{"../testfiles/100.JPG"});
+94   Mat img = imread(imageName1, IMREAD\_COLOR);
+95   resize(img, img, Size(375, 500), 0, 0, CV\_INTER\_AREA);
+96   Mat imgBW;
+97   cvtColor(img, imgBW, CV\_BGR2GRAY);
+98   adaptiveThreshold(imgBW, imgBW, 255,
+99              CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+100   \textcolor{keywordtype}{bool} found = qr.\hyperlink{classdetectQRcode_afbac1fead0246a27d3e143bb0f1223f0}{find}(imgBW);
+101   ASSERT\_TRUE(found);
+102   qr.\hyperlink{classdetectQRcode_af429ccf110e1250e38e2a9fa249ce459}{drawBoundary}(img);
+103   found = qr.\hyperlink{classdetectQRcode_a07eb3b6401b656d0d25f3ddbaec791bc}{extractQRcode}(img);
+104   ASSERT\_TRUE(found);
+105   cvtColor(img, imgBW, CV\_BGR2GRAY);
+106   adaptiveThreshold(imgBW, imgBW, 255,
+107            CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+108   \hyperlink{classdecodeQRcode}{decodeQRcode} qr1, qr2;
+109   qr1.\hyperlink{classdecodeQRcode_a5f805f807f0dd0f60e0a1727724dbb47}{extractBits}(imgBW);
+110   img = imread(imageName2, IMREAD\_COLOR);
+111   resize(img, img, Size(375, 500), 0, 0, CV\_INTER\_AREA);
+112   cvtColor(img, imgBW, CV\_BGR2GRAY);
+113   adaptiveThreshold(imgBW, imgBW, 255,
+114           CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+115   found = qr.\hyperlink{classdetectQRcode_afbac1fead0246a27d3e143bb0f1223f0}{find}(imgBW);
+116   ASSERT\_TRUE(found);
+117   qr.\hyperlink{classdetectQRcode_af429ccf110e1250e38e2a9fa249ce459}{drawBoundary}(img);
+118   found = qr.\hyperlink{classdetectQRcode_a07eb3b6401b656d0d25f3ddbaec791bc}{extractQRcode}(img);
+119   ASSERT\_TRUE(found);
+120   cvtColor(img, imgBW, CV\_BGR2GRAY);
+121   adaptiveThreshold(imgBW, imgBW, 255,
+122           CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+123   qr2.\hyperlink{classdecodeQRcode_a5f805f807f0dd0f60e0a1727724dbb47}{extractBits}(imgBW);
+124   \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < qr1.\hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.rows; i++)
+125     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} j = 0; j < qr1.\hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.cols; j++)
+126       EXPECT\_EQ(qr1.\hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(i, j), qr2.\hyperlink{classdecodeQRcode_a5041ce83542f15b8ccd67203e9426fe4}{bits}.at<uchar>(i, j));
+127 \}
+\end{DoxyCode}
+\index{test.\+cpp@{test.\+cpp}!T\+E\+ST@{T\+E\+ST}}
+\index{T\+E\+ST@{T\+E\+ST}!test.\+cpp@{test.\+cpp}}
+\subsubsection[{\texorpdfstring{T\+E\+S\+T(get\+I\+D\+Method, should\+\_\+pass)}{TEST(getIDMethod, should_pass)}}]{\setlength{\rightskip}{0pt plus 5cm}T\+E\+ST (
+\begin{DoxyParamCaption}
+\item[{get\+I\+D\+Method}]{, }
+\item[{should\+\_\+pass}]{}
+\end{DoxyParamCaption}
+)}\hypertarget{test_8cpp_a097540b54ef25816ca18aca1af540f9b}{}\label{test_8cpp_a097540b54ef25816ca18aca1af540f9b}
+
+\begin{DoxyCode}
+129                                \{
+130   \hyperlink{classdetectQRcode}{detectQRcode} qr;
+131   String imageName1(\textcolor{stringliteral}{"../testfiles/100.JPG"});
+132   String imageName2(\textcolor{stringliteral}{"../testfiles/100.JPG"});
+133   String imageName3(\textcolor{stringliteral}{"../testfiles/1101.JPG"});
+134   Mat img = imread(imageName1, IMREAD\_COLOR);
+135   resize(img, img, Size(375, 500), 0, 0, CV\_INTER\_AREA);
+136   Mat imgBW;
+137   cvtColor(img, imgBW, CV\_BGR2GRAY);
+138   adaptiveThreshold(imgBW, imgBW, 255,
+139          CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+140   \textcolor{keywordtype}{bool} found = qr.\hyperlink{classdetectQRcode_afbac1fead0246a27d3e143bb0f1223f0}{find}(imgBW);
+141   ASSERT\_TRUE(found);
+142   qr.\hyperlink{classdetectQRcode_af429ccf110e1250e38e2a9fa249ce459}{drawBoundary}(img);
+143   found = qr.\hyperlink{classdetectQRcode_a07eb3b6401b656d0d25f3ddbaec791bc}{extractQRcode}(img);
+144   ASSERT\_TRUE(found);
+145   cvtColor(img, imgBW, CV\_BGR2GRAY);
+146   adaptiveThreshold(imgBW, imgBW, 255,
+147                    CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+148   \hyperlink{classdecodeQRcode}{decodeQRcode} qr1, qr2, qr3;
+149   qr1.\hyperlink{classdecodeQRcode_a5f805f807f0dd0f60e0a1727724dbb47}{extractBits}(imgBW);
+150   qr1.\hyperlink{classdecodeQRcode_ad72967ae804cfbee23ee05f2a82b1fc3}{getData}();
+151   \textcolor{keywordtype}{int} iD1 = qr1.\hyperlink{classdecodeQRcode_a9f5367c400fdd17f4ae09af140b7e604}{getID}();
+152   img = imread(imageName2, IMREAD\_COLOR);
+153   resize(img, img, Size(375, 500), 0, 0, CV\_INTER\_AREA);
+154   cvtColor(img, imgBW, CV\_BGR2GRAY);
+155   adaptiveThreshold(imgBW, imgBW, 255,
+156                    CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+157   found = qr.\hyperlink{classdetectQRcode_afbac1fead0246a27d3e143bb0f1223f0}{find}(imgBW);
+158   ASSERT\_TRUE(found);
+159   qr.\hyperlink{classdetectQRcode_af429ccf110e1250e38e2a9fa249ce459}{drawBoundary}(img);
+160   found = qr.\hyperlink{classdetectQRcode_a07eb3b6401b656d0d25f3ddbaec791bc}{extractQRcode}(img);
+161   ASSERT\_TRUE(found);
+162   cvtColor(img, imgBW, CV\_BGR2GRAY);
+163   adaptiveThreshold(imgBW, imgBW, 255,
+164                 CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+165   qr2.\hyperlink{classdecodeQRcode_a5f805f807f0dd0f60e0a1727724dbb47}{extractBits}(imgBW);
+166   qr2.\hyperlink{classdecodeQRcode_ad72967ae804cfbee23ee05f2a82b1fc3}{getData}();
+167   \textcolor{keywordtype}{int} iD2 = qr2.\hyperlink{classdecodeQRcode_a9f5367c400fdd17f4ae09af140b7e604}{getID}();
+168   img = imread(imageName3, IMREAD\_COLOR);
+169   resize(img, img, Size(375, 500), 0, 0, CV\_INTER\_AREA);
+170   cvtColor(img, imgBW, CV\_BGR2GRAY);
+171   adaptiveThreshold(imgBW, imgBW, 255,
+172                     CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+173   found = qr.\hyperlink{classdetectQRcode_afbac1fead0246a27d3e143bb0f1223f0}{find}(imgBW);
+174   ASSERT\_TRUE(found);
+175   qr.\hyperlink{classdetectQRcode_af429ccf110e1250e38e2a9fa249ce459}{drawBoundary}(img);
+176   found = qr.\hyperlink{classdetectQRcode_a07eb3b6401b656d0d25f3ddbaec791bc}{extractQRcode}(img);
+177   ASSERT\_TRUE(found);
+178   cvtColor(img, imgBW, CV\_BGR2GRAY);
+179   adaptiveThreshold(imgBW, imgBW, 255,
+180                     CV\_ADAPTIVE\_THRESH\_GAUSSIAN\_C, CV\_THRESH\_BINARY, 51, 0);
+181   qr3.\hyperlink{classdecodeQRcode_a5f805f807f0dd0f60e0a1727724dbb47}{extractBits}(imgBW);
+182   qr3.\hyperlink{classdecodeQRcode_ad72967ae804cfbee23ee05f2a82b1fc3}{getData}();
+183   \textcolor{keywordtype}{int} iD3 = qr3.\hyperlink{classdecodeQRcode_a9f5367c400fdd17f4ae09af140b7e604}{getID}();
+184   EXPECT\_EQ(iD1, iD2);
+185   EXPECT\_NE(iD1, iD3);
+186 \}
+\end{DoxyCode}
+\index{test.\+cpp@{test.\+cpp}!T\+E\+ST@{T\+E\+ST}}
+\index{T\+E\+ST@{T\+E\+ST}!test.\+cpp@{test.\+cpp}}
+\subsubsection[{\texorpdfstring{T\+E\+S\+T(get\+Count\+Method, should\+\_\+pass)}{TEST(getCountMethod, should_pass)}}]{\setlength{\rightskip}{0pt plus 5cm}T\+E\+ST (
+\begin{DoxyParamCaption}
+\item[{get\+Count\+Method}]{, }
+\item[{should\+\_\+pass}]{}
+\end{DoxyParamCaption}
+)}\hypertarget{test_8cpp_a111c1d569af0b2731ff36ccdbadc02bf}{}\label{test_8cpp_a111c1d569af0b2731ff36ccdbadc02bf}
+
+\begin{DoxyCode}
+188                                   \{
+189   vector<int> test, sample;;
+190   sample = \{44, 532, 100, 2, 7, 1100\};
+191   \textcolor{keywordtype}{int} pID;
+192   ifstream input;
+193   input.open(\textcolor{stringliteral}{"../testfiles/rawIDs.txt"});
+194   \textcolor{keywordflow}{while} (!input.eof()) \{
+195       input >> pID;
+196       test.push\_back(pID);
+197   \}
+198   input.close();
+199   \hyperlink{classcountID}{countID} qr;
+200   qr.\hyperlink{classcountID_a0f8694fe0a26804d83df3e8f23a378d1}{getCount}(test);
+201   EXPECT\_EQ(sample, qr.\hyperlink{classcountID_aa19098f252bab94e0c50937e5a189eb5}{ID});
+202 \}
+\end{DoxyCode}
